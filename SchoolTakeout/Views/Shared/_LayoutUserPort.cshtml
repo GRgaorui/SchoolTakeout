@@ -1,0 +1,29 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单点</title>
+    <link rel="stylesheet" href="~/Content/bootstrap1.css" />
+    <link rel="stylesheet" href="~/Content/LittleStore/FoodPage.css" />
+    <link rel="stylesheet" href="~/Content/LittleStore/MinePage.css" />
+    <link rel="stylesheet" href="~/Content/LittleStore/OrdersPage.css" />
+    <link rel="stylesheet" href="~/Content/LittleStore/ShopsPage.css" />
+    <link rel="stylesheet" href="~/Content/LittleStore/Site1.css" />
+    <link rel="stylesheet" href="~/Content/LittleStore/NowOrderPage.css" />
+    <link rel="stylesheet" href="~/Content/LittleStore/ImfoPage.css" />
+    @Scripts.Render("~/bundles/modernizr")
+</head>
+<body>
+        @RenderBody()
+        <div style="margin-top: 10px;border-top: solid medium #ffffff;">
+            <footer>
+                <p>&copy; @DateTime.Now.Year - 简单点</p>
+            </footer>
+        </div>
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("scripts", required: false)
+</body>
+</html>

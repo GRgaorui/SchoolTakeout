@@ -1,0 +1,143 @@
+﻿#navul {
+    text-align: center;
+}
+
+#navul > .touchend {
+    width: 32%;
+    padding: 0px 0px 0px 0px;
+    margin-bottom: 2px;
+    text-align: center;
+    display: inline-block;
+    font-size: 15px; 
+}
+
+#navul > li > a {
+    text-align: center;
+    padding: 3px 15px;
+}
+
+#navul > .touchend > a ,#navul > .touchend > .navIcon{
+    color: #FFCA28;
+}
+
+#navul > .touchstart{
+    width: 32%;
+    padding: 0px 0px 0px 0px;
+    margin-bottom: 2px;
+    text-align: center;
+    display: inline-block;
+    font-size: 15px;
+    background-color: #FFCA28;
+    border-bottom:solid medium #FFB300;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+
+#navul > .touchstart > a, #navul > .touchstart > .navIcon {
+    color: #FFF8E1;
+}    
+
+#Brand {
+    padding-top: 50px;
+    padding-bottom: 25px;
+    padding-left: 15px;
+    color: #FFF8E1;
+    background-color: #FFCA28;
+    border-bottom: solid 5px #ededed;
+}
+
+.TitleIcon {
+    width: 20%;
+    font-size: 50px;
+    height: 57px;
+}
+
+.TitleText {
+    margin:-40px 0 0 70px;
+    font-size: 30px;
+}
+
+#Shops {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-top: thick solid #d0d0d0;
+}
+
+.ShopColumn {
+    display: block;
+    width: auto;
+    min-height: 100px;
+    margin-bottom: 3px;
+    background-color: #ffffff;
+}
+
+.ShopPic {
+    background-size: cover;
+    display: block;
+    width: 80px;
+    height: 80px;
+}
+
+.ShopImfo {
+    display: block;
+    margin-left: 90px;
+    margin-top: -80px;
+    width: auto;
+    height: auto;
+}
+
+.ShopName {
+    display: block;
+    width: auto;
+    height: auto;
+    font-size: 20px;
+}
+
+.Comment {
+    display: none;
+    width: auto;
+    height: auto;
+}
+
+.PackingImfo {
+    color: #d0d0d0;
+    display: block;
+    width: auto;
+}
+
+.PackingImfo > div {
+    display:inline-block;
+    width:auto;
+    padding:3px 0 3px 0;
+}
+
+.PackingImfo > .PackingPrice {
+    display: none;
+    padding-right: 5px;
+    border-right: thin solid #d0d0d0;
+}
+
+.PackingImfo > .DistributionPrice {
+    padding-left: 5px;
+}
+
+.SalesEvents {
+    display: none;
+    margin-top: 10px;
+    padding-top: 5px;
+    border-top: thin solid #d0d0d0;
+    min-height: 60px;
+}
+
+.SalesEvents > div {
+    list-style-type: none;
+    padding:2px 0 2px 0;
+}
+
+.ShopAddress {
+    margin-top: 5px;
+    border-top:thin solid #d0d0d0;
+    color: #d0d0d0;
+    font-size: 16px;
+}

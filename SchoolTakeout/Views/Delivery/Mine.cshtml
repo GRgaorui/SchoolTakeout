@@ -1,0 +1,46 @@
+﻿@{
+    Layout = "~/Views/Shared/_DeliveryLayout.cshtml";
+}
+
+@{
+    ViewBag.Title = "Mine";
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+    <script>
+        var localStorage = window.localStorage;
+        function zhuxiao() {
+            localStorage.removeItem("Login");
+            localStorage.removeItem("Account");
+            //window.location.href = "/Delivery/Login";
+            navigator.app.exitApp(); 
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <div class="Minetopnav">
+            <div class="MineLogo">
+                <p class="glyphicon glyphicon-user"></p>
+                <p class="Minelogostyle">ID:@ViewData["Account"]</p>
+            </div>
+        </div>
+        <div class="row">
+            <div style="margin-top:160px">
+                <div class="Minepage">
+                    <a href="/Delivery/MyOrder?id=@ViewData["Account"]"><ul class="Minepage-ul"><li>我的订单</li></ul></a>
+                    <a href="https://www.baidu.com/"><ul class="Minepage-ul"><li>我的订单</li></ul></a>
+                    <a href="https://www.baidu.com/"><ul class="Minepage-ul"><li>我的订单</li></ul></a>
+                </div>
+                <div class="Minepage">
+                    <a href="javascript:zhuxiao()"><ul class="Minepage-ul"><li>注销</li></ul></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

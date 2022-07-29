@@ -1,0 +1,73 @@
+﻿@{
+    ViewBag.Title = "distribution";
+}
+@{
+    Layout = "~/Views/Shared/_ShopManageLayout.cshtml";
+}
+@using SchoolTakeout.Tool;
+@using System.Data.SqlClient;
+@using System.Runtime.Serialization.Json;
+@using System.Runtime.Serialization;
+@using System.Text;
+@{
+    SqlDB A = new SqlDB();
+    SqlDataReader read = A.GetTypeOrder("cuitorder" + ViewData["Account"], "2' or RealtimeState = '3' or RealtimeState = '4' or RealtimeState = '5");
+    List<List<string>> show = new List<List<string>>();
+    while (read.Read())
+    {
+        List<string> arry = new List<string>();
+        for (int i = 0; i < read.FieldCount; i++)
+        {
+            arry.Add(read[i].ToString());
+        }
+        show.Add(arry);
+    }
+    A.CloseConnection();
+    DataContractJsonSerializer json = new DataContractJsonSerializer(show.GetType());
+    string szJson = "";
+    using (MemoryStream stream = new MemoryStream()) //序列化
+    {
+        json.WriteObject(stream, show);
+        szJson = Encoding.UTF8.GetString(stream.ToArray());
+    }
+}
+<div id="topNav" class="navbar navbar-fixed-top">
+    <div class="container">
+        <div class="navbar">
+            <ul id="orderNav" class="nav nav-tabs">
+                <li><a href="/ShopManage/OrderMain?Account=@ViewData["Account"].ToString()">待处理</a></li>
+                <li class="active1"><a href="/ShopManage/distribution?Account=@ViewData["Account"].ToString()">已接受</a></li>
+                <li> <a href="/ShopManage/Completed?Account=@ViewData["Account"].ToString()">已完成</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div id="OrderFormR" class="Row orderform">
+
+
+</div>
+<script type="text/javascript">
+    window.onload = function () {
+        var text = "@szJson";
+        var arrEntities = { 'lt': '<', 'gt': '>', 'nbsp': ' ', 'amp': '&', 'quot': '"' };
+        var t = text.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) { return arrEntities[t]; });
+        var obj = eval("(" + t + ")");
+
+        var i = 0;
+        while (i < obj.length) {
+            var a = obj[i][3];
+            a.replace("GR", "<br/>");
+            a += "总计：  ¥" + obj[i][4] + "<br/>" + "<br/>餐盒费：  ¥" + obj[i][5];
+            var b = obj[i][6].split("WC");
+            var state = "烹";
+            if (obj[i][7] == 5)
+            {
+                state="送"
+            }
+            var date = new Date(parseInt(obj[i][8])).toLocaleString();
+            AddOrder(i, date, state, a, b[0], b[1], b[2], obj[i][0], obj[i][1], obj[i][2]);
+            i++;
+        }
+        setInterval("updata()", 5000);
+    }
+</script>

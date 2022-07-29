@@ -1,0 +1,99 @@
+﻿
+
+@using SchoolTakeout.Tool;
+@using System.Data.SqlClient;
+@using System.Runtime.Serialization.Json;
+@using System.Runtime.Serialization;
+@using System.Text;
+@{
+    Layout = "~/Views/Shared/_LayoutUserPort.cshtml";
+}
+@{
+    SqlDB A = new SqlDB();
+    SqlDataReader read = A.GetShop();
+    List<List<string>> show = new List<List<string>>();
+    while (read.Read())
+    {
+        List<string> arry = new List<string>();
+        for (int i = 0; i < read.FieldCount; i++)
+        {
+            arry.Add(read[i].ToString());
+        }
+        show.Add(arry);
+    }
+    A.CloseConnection();
+    DataContractJsonSerializer json = new DataContractJsonSerializer(show.GetType());
+    string szJson = "";
+    using (MemoryStream stream = new MemoryStream()) //序列化
+    {
+        json.WriteObject(stream, show);
+        szJson = Encoding.UTF8.GetString(stream.ToArray());
+    }
+}
+
+<script>
+    var Shops;
+
+    function jump(Shop) {
+        window.location.href = "/LittleStore/Food?ShopID=" + Shop.id + "&ShopName=" + $(Shop).find(".ShopName").text() + "&ShopAddress=" + $(Shop).attr("address") + "&DistributionPrice=" + $(Shop).find(".DistributionPrice").text().replace("配送费¥","") + "&UserAccount=@ViewData["Account"]&UserName=@ViewData["Name"]&UserPhone=@ViewData["Telephone"]&UserAddress=@ViewData["Address"]";
+    }
+    @*function JumpShop() {
+        alert(1);
+        window.location.href = "/LittleStore/Shop?UserAccount=@ViewData["Account"]&UserName=@ViewData["Name"]&UserPhone=@ViewData["Telephone"]&UserAddress=@ViewData["Address"]";
+    }
+    function JumpOrder() {
+        window.location.href = "/LittleStore/Order?UserAccount=@ViewData["Account"]&UserName=@ViewData["Name"]&UserPhone=@ViewData["Telephone"]&UserAddress=@ViewData["Address"]";
+    }
+    function JumpMine() {
+        window.location.href = "/LittleStore/Mine?UserAccount=@ViewData["Account"]&UserName=@ViewData["Name"]&UserPhone=@ViewData["Telephone"]&UserAddress=@ViewData["Address"]";
+    }*@
+    window.onload = function ()
+    {
+        var text = "@szJson";
+        var arrEntities = { 'lt': '<', 'gt': '>', 'nbsp': ' ', 'amp': '&', 'quot': '"' };
+        var t=text.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) { return arrEntities[t]; });
+        var obj = eval("(" + t + ")");
+        var i = 0;
+        while (i < obj.length) {
+            if (obj[i][2] == 1) {
+                Shops = "<div class='ShopColumn' address='" + obj[i][4] + "' onclick='jump(this)' id='" + obj[i][0] + "'><div class='ShopPic' id='ShopPic" + i + "'> <img src='" + obj[i][5] + "' class='ShopPic'></div> <div class='ShopImfo' id='ShopImfo" + i + "'><div class='ShopName' id='ShopName" + i + "'>" + obj[i][1] + "</div><div class='Comment' id='Comment" + i + "'>*****</div><div class='PackingImfo' id='PackingImfo" + i + "'><div class='PackingPrice' id='PackingPrice" + i + "'></div><div class='DistributionPrice' id='DistributionPrice" + i + "'>配送费¥"+ obj[i][6] +"</div></div><div class='SalesEvents' id='SalesEvents" + i + "'><div>活动1</div><div>活动2</div></div><div class='ShopAddress' id='ShopAddress" + i + "'>" + "商家地址:"+ obj[i][4] + "</div></div></div>";
+                $("#Shops").append(Shops);
+            }
+            i++;
+        }
+    }
+</script>
+
+<nav class="navbar navbar-inverse navbar-fixed-bottom ">
+    <div class="container">
+            <ul class="nav navbar-nav" id="navul">
+                <li class="touchstart">
+                    <div id="navShopIcon" class="navIcon glyphicon glyphicon-home" aria-hidden="true">
+                    </div>
+                    <a href="/LittleStore/Shop?UserAccount=@ViewData["Account"]&UserName=@ViewData["Name"]&UserPhone=@ViewData["Telephone"]&UserAddress=@ViewData["Address"]">商店</a>
+                </li>
+                <li class="touchend">
+                    <div id="navOrderIcon" class="navIcon glyphicon glyphicon-shopping-cart" aria-hidden="true">
+                    </div>
+                    <a href="/LittleStore/Order?UserAccount=@ViewData["Account"]&UserName=@ViewData["Name"]&UserPhone=@ViewData["Telephone"]&UserAddress=@ViewData["Address"]">订单</a>
+                </li>
+                <li class="touchend">
+                    <div id="navMineIcon" class="navIcon glyphicon glyphicon-user" aria-hidden="true">
+                    </div>
+                    <a href="/LittleStore/Mine?UserAccount=@ViewData["Account"]&UserName=@ViewData["Name"]&UserPhone=@ViewData["Telephone"]&UserAddress=@ViewData["Address"]">我的</a>
+                </li>
+            </ul>
+    </div>
+</nav>
+
+
+
+<div id="Shops">
+    <div id="Brand">
+        <div id="BrandIcon" class="TitleIcon glyphicon glyphicon-home" aria-hidden="true">
+        </div>
+        <div id="BrandText" class="TitleText">
+            简单点
+        </div>
+    </div>
+</div>

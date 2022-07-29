@@ -1,0 +1,201 @@
+﻿#FoodList::-webkit-scrollbar {
+    display: none;
+}
+
+#TypeSlider::-webkit-scrollbar {
+    display: none;
+}
+
+#Food {
+    border-top: thick solid #d0d0d0;
+}
+
+#TypeSlider {
+    float: left;
+    width: 25%;
+    background-color: #ededed;
+    overflow: scroll;
+}
+
+#Typeul {
+    margin: 0 8px;
+    padding: 0;
+}
+
+#Typeul > li {
+    list-style-type: none;
+}
+
+.TypeUnTouch {
+    border-bottom:thin solid #d0d0d0;
+    width: auto;
+    color: #999999;
+    font-size: 12px;
+    letter-spacing: 2px;
+    padding: 15px 2px;
+}
+
+.TypeTouch {
+    border-bottom: thin solid #ffffff;
+    background-color: #ffffff;
+    width: auto;
+    color: #FFCA28;
+    font-size: 12px;
+    letter-spacing: 2px;
+    padding: 16px 10px 15px 10px;
+    margin: -1px -8px 0 -8px;
+}
+
+#FoodList {
+    overflow: scroll;
+    float: left;
+    width: 75%;
+    background-color: #ffffff;
+}
+
+.FoodColumn {
+    border-bottom: solid 1px #ededed;
+    padding: 7px 0;
+    margin: 0 5px;
+    min-height: 94px;
+}
+
+.FoodImg {
+    background-size: cover;
+    width: 80px;
+    height: 80px;
+}
+
+.FoodImfo {
+    margin: -83px 0 0 85px;
+}
+
+.FoodName {
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.FoodMes {
+    margin: 1px 0;
+    color: #d0d0d0;
+    font-size: 9px;
+}
+
+.PackingPrice {
+    color: #d0d0d0;
+    margin: 1px 0;
+    font-size: 9px;
+}
+
+.FoodPrice {
+    margin: 10px 0;
+    color: #FF5252;
+}
+
+.PriceNum {
+    font-size: 25px;
+    margin: -31px 0 0 7px;
+}
+
+.AddFood {
+    color: #FFCA28;
+    margin: -40px 0 0 85%;
+    font-size: 20px;
+    width: 25px;
+    height: 25px;
+}
+
+#ShopTrolley {
+    border-width: 0px;
+    background-color: #FFCA28;
+    color: #FFCA28;
+}
+
+#ShopTrolleyPic {
+    color: #d0d0d0;
+    font-size: 30px;
+    background-color: #FFF8E1;
+    width: 54px;
+    height: 54px;
+    border-radius: 27px;
+    border: #FFCA28 thick solid;
+    margin: -18px 0 0 20px;
+    padding:4px 0px 0px 7px;
+}
+
+#TotalPrice {
+    margin: -36px 0 0 25%;
+    padding: 5px;
+    width: auto;
+    height: auto;
+    background-color: #FFCA28;
+    font-size: 20px;
+    color: #FFF8E1;
+}
+
+#TotalPriceNum {
+    margin: -28px 0 0 15px;
+}
+
+#DistributionPrice {
+    margin: -27px 0 0 50%;
+    padding-bottom: 2px;
+    color: #FFF8E1;
+}
+
+#Pay {
+    text-align: center;
+    color: #ffffff;
+    width: auto;
+    height: auto;
+    background-color: #d0d0d0;
+    padding: 10px 10px;
+    font-size: 17px;
+    margin: -30px 0 0px 77%;
+}
+
+.OrderFoodList::-webkit-scrollbar {
+    display: none;
+}
+
+#OrderFoodList {
+    display: none;
+    height: 150px;
+    background-color: #ffffff;
+    overflow: scroll;
+}
+
+.OrderFood {
+    margin: 10px 0;
+    font-size: 15px;
+    list-style-type:none;
+}
+
+.OrderFoodPrice {
+    color: #FF5252; 
+    font-weight: 600;
+    margin: -22px 0 0 35%;
+}
+
+.OrderFoodPriceNum {
+    margin: -21px 0 0 15px;
+}
+
+.OrderFoodNum {
+    font-weight: 600;
+    margin: -21px 0 0 80px;
+}
+
+.OrderFoodMinus {
+    width: 20px;
+    height: 22px;
+    font-size: 18px;
+    margin: -21px 0 0 110px;
+}
+
+.OrderFoodPlus {
+    width: 20px;
+    height: 22px;
+    font-size: 18px;
+    margin: -22px 0 0 150px;
+}

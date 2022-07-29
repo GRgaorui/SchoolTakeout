@@ -1,0 +1,42 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+<input type="text" id="qwer" />
+<input type="button" onclick="order()" value="下单" />
+<script>
+    var myDate = new Date();    
+    var UserAccount = "999999";
+    var ShopInfo = "1234";
+    var FoodInfo = "1234";
+    var Price = "1234";
+    var PackingPrice = "1234";
+    var ClientInfo = "1234";
+    var RealtimeState = "1234";
+    var EndState = "1234";
+    var Time = "1234";
+    var num = 1;
+    function order() {
+        var ShopAccount = document.getElementById("qwer").value;
+        var timestamp = myDate.getTime();
+        var OrderID = num + timestamp;
+        num++;
+        alert(ShopAccount);
+        $.ajax({
+            type: "post",
+            url: "/Home/Order",
+            data: {"OrderID":OrderID,"UserAccount":UserAccount,"ShopAccount":ShopAccount,"ShopInfo":ShopInfo,"FoodInfo":FoodInfo,"Price":Price,"PackingPrice":PackingPrice,"ClientInfo":ClientInfo,"RealtimeState":RealtimeState,"EndState":EndState,"Time":Time},
+            dataType: 'JSON',
+            async: false,
+            success: function (result) {
+                if (result == 1) {
+                    alert("下单成功");
+                }
+                else if (result == 0) {
+                    alert("商店状态修改失败");
+                }
+            }
+        });
+    }
+
+    
+</script>

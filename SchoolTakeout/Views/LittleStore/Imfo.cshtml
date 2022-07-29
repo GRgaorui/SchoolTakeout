@@ -1,0 +1,224 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_LayoutUserPort.cshtml";
+}
+
+<script>
+    //是否聚焦称呼输入框
+    function FocusName(text) {
+        $(text).closest("#NameText").siblings("#NameAlert").css("display", "block");
+    }
+    function UnFocusName(text) {
+        $(text).closest("#NameText").siblings("#NameAlert").css("display", "none");
+    }
+
+    //是否聚焦号码输入框
+    function FocusPhone(text) {
+        $(text).closest("#PhoneNumText").siblings("#PhoneAlert").css("display", "block");
+    }
+    function UnFocusPhone(text) {
+        $(text).closest("#PhoneNumText").siblings("#PhoneAlert").css("display", "none");
+    }
+
+    //是否聚焦地址输入框
+    function FocusBuildAddress(text) {
+        $(text).closest("#BuildAddressText").siblings("#BuildAlert").css("display", "block");
+    }
+    function UnFocusBuildAddress(text) {
+        $(text).closest("#BuildAddressText").siblings("#BuildAlert").css("display", "none");
+    }
+    function FocusRoomAddress(text) {
+        $(text).closest("#RoomAddressText").siblings("#RoomAlert").css("display", "block");
+    }
+    function UnFocusRoomAddress(text) {
+        $(text).closest("#RoomAddressText").siblings("#RoomAlert").css("display", "none");
+    }
+
+    var Complete = new Array();
+    Complete[0] = 0;
+    Complete[1] = 0;
+    Complete[2] = 0;
+    Complete[3] = 0;
+    //检查是否全部输入
+    function Check(text, FatherID) {
+        if (Complete[0] == 1 && Complete[1] == 1 && Complete[2] == 1 && Complete[3] == 1) {
+            $(text).closest("#" + FatherID).siblings("#MakeSure").css("background-color", "#00B0FF");
+            $(text).closest("#" + FatherID).siblings("#MakeSure").css("color", "#E1F5FE");
+            $("#MakeSure").attr("state", "1");
+        }
+        else {
+            $(text).closest("#" + FatherID).siblings("#MakeSure").css("background-color", "#d0d0d0");
+            $(text).closest("#" + FatherID).siblings("#MakeSure").css("color", "#ededed");
+            $("#MakeSure").attr("state", "0");
+        }
+    }
+    //提示输入是否超值
+    function KeyName(text) {
+        var max = 12;
+        var num = $(text).val().length;
+        if (num <= max && num > 0) {
+            Complete[3] = 1;
+            $(text).closest("#NameText").siblings("#NameAlert").css("color", "#00B0FF");
+            $(text).closest("#NameText").siblings("#NameAlert").css("border-color", "#00B0FF");
+            $(text).closest("#NameText").siblings("#NameAlert").css("display", "none");
+        }
+        else if (num > max) {
+            Complete[3] = 0;
+            $(text).closest("#NameText").siblings("#NameAlert").css("color", "#FF5252");
+            $(text).closest("#NameText").siblings("#NameAlert").css("border-color", "#FF5252");
+            $(text).closest("#NameText").siblings("#NameAlert").css("display", "block");
+            $(text).closest("#NameText").siblings("#NameAlert").text("昵称过长");
+        }
+        else if(num == 0) {
+            Complete[3] = 0;
+            $(text).closest("#NameText").siblings("#NameAlert").css("color", "#d0d0d0");
+            $(text).closest("#NameText").siblings("#NameAlert").css("border-color", "#d0d0d0");
+            $(text).closest("#NameText").siblings("#NameAlert").css("display", "block");
+            $(text).closest("#NameText").siblings("#NameAlert").text("未输入");
+        }
+        Check(text, "Name");
+    }
+    function KeyPhone(text) {
+        var max = 11;
+        var hypermax = 19;
+        var num = $(text).val().length;
+        if (num > hypermax) {
+            Complete[0] = 0;
+            num = hypermax;
+        }
+        else {
+            if (num == max) {
+                Complete[0] = 1;
+                $(text).closest("#PhoneNumText").siblings("#PhoneAlert").css("color", "#00B0FF");
+                $(text).closest("#PhoneNumText").siblings("#PhoneAlert").css("border-color", "#00B0FF");
+            }
+            else if (num > max) {
+                Complete[0] = 0;
+                $(text).closest("#PhoneNumText").siblings("#PhoneAlert").css("color", "#FF5252");
+                $(text).closest("#PhoneNumText").siblings("#PhoneAlert").css("border-color", "#FF5252");
+            }
+            else {
+                Complete[0] = 0;
+                $(text).closest("#PhoneNumText").siblings("#PhoneAlert").css("color", "#d0d0d0");
+                $(text).closest("#PhoneNumText").siblings("#PhoneAlert").css("border-color", "#d0d0d0");
+            }
+        }
+        $(text).closest("#PhoneNumText").siblings("#PhoneAlert").text(num + "/" + max);
+        Check(text, "Phone");
+    }
+    function KeyBuild(text) {
+        var min = 1;
+        var max = 2;
+        var number = $(text).val();
+        var num = $(text).val().length;
+        var str = "错误地址";
+        if (num <= max && num >= min && number < 21) {
+            Complete[1] = 1;
+            $(text).closest("#BuildAddressText").siblings("#BuildAlert").css("color", "#00B0FF");
+            $(text).closest("#BuildAddressText").siblings("#BuildAlert").css("border-color", "#00B0FF");
+            $(text).closest("#BuildAddressText").siblings("#BuildAlert").css("display", "none");
+        }
+        else if (num > max || number >=21 ) {
+            Complete[1] = 0;
+            str = "错误地址";
+            $(text).closest("#BuildAddressText").siblings("#BuildAlert").css("color", "#FF5252");
+            $(text).closest("#BuildAddressText").siblings("#BuildAlert").css("border-color", "#FF5252");
+            $(text).closest("#BuildAddressText").siblings("#BuildAlert").css("display", "block");
+            $(text).closest("#BuildAddressText").siblings("#BuildAlert").text(str);
+        }
+        else {
+            Complete[1] = 0;
+            str = "空地址";
+            $(text).closest("#BuildAddressText").siblings("#BuildAlert").css("color", "#d0d0d0");
+            $(text).closest("#BuildAddressText").siblings("#BuildAlert").css("border-color", "#d0d0d0");
+            $(text).closest("#BuildAddressText").siblings("#BuildAlert").css("display", "block");
+            $(text).closest("#BuildAddressText").siblings("#BuildAlert").text(str);
+        }
+        Check(text, "Address");
+    }
+    function KeyRoom(text) {
+        var min = 3;
+        var max = 4;
+        var number = $(text).val();
+        var num = $(text).val().length;
+        var str = "错误地址";
+        if (num <= max && num >= min && number < 7000) {
+            Complete[2] = 1;
+            $(text).closest("#RoomAddressText").siblings("#RoomAlert").css("color", "#00B0FF");
+            $(text).closest("#RoomAddressText").siblings("#RoomAlert").css("border-color", "#00B0FF");
+            $(text).closest("#RoomAddressText").siblings("#RoomAlert").css("display", "none");
+        }
+        else if (num > max || (num < min && num > 0) || number >= 7000 ) {
+            Complete[2] = 0;
+            str = "错误地址";
+            $(text).closest("#RoomAddressText").siblings("#RoomAlert").css("color", "#FF5252");
+            $(text).closest("#RoomAddressText").siblings("#RoomAlert").css("border-color", "#FF5252");
+            $(text).closest("#RoomAddressText").siblings("#RoomAlert").css("display", "block");
+            $(text).closest("#RoomAddressText").siblings("#RoomAlert").text(str);
+        }
+        else {
+            str = "空地址";
+            Complete[2] = 0;
+            $(text).closest("#RoomAddressText").siblings("#RoomAlert").css("color", "#d0d0d0");
+            $(text).closest("#RoomAddressText").siblings("#RoomAlert").css("border-color", "#d0d0d0");
+            $(text).closest("#RoomAddressText").siblings("#RoomAlert").css("display", "block");
+            $(text).closest("#RoomAddressText").siblings("#RoomAlert").text(str);
+        }
+        Check(text, "Address");
+    }
+
+    //点击提交
+    function Submit(Button) {
+        if ($("#MakeSure").attr("state") == "1") {
+            var str = $("#NameText").find("input").val();
+            alert(str);
+            $.ajax({
+                type: "post",
+                url: "/LittleStore/GetUserImfo",
+                data: { "Name": $("#NameText").find("input").val(), "Phone": $("#PhoneNumText").find("input").val(), "Address": $("#BuildAddressText").find("input").val() +"栋"+$("#RoomAddressText").find("input").val(),"Openid":@ViewData["WeChatOpenid"]},
+                dataType: 'TEXT',
+                async: false,
+                success: function (result) {
+                    if (result == 1)
+                        window.location.href = "/LittleStore/Shop";
+                    else {
+                        alert("注册失败,请稍后再试");
+                    }
+                }
+                });
+        }
+    }
+</script>
+
+<div id="Imfo">
+    <div id="WelCome">
+        <div> 欢迎来到简单点</div>
+    </div>
+    <div id="Name">
+        <div id="NameHint">请输入我们对您的称呼</div>
+        <div class="Request glyphicon glyphicon-user"></div>
+        <div id="NameText"><input type="text" onfocus="FocusName(this)" onblur="UnFocusName(this)" onkeyup="KeyName(this)"/></div>
+        <div id="Student">同学</div>
+        <div id="NameAlert">未输入</div>
+    </div>
+    <div id="Phone">
+        <div id="PhoneHint">请输入您的常用联系电话</div>
+        <div class="Request glyphicon glyphicon-phone"></div>
+        <div id="PhoneNumText"><input type="number" pattern="[0-9]*" onfocus="FocusPhone(this)" onblur="UnFocusPhone(this)" onkeyup="KeyPhone(this)" /></div>
+        <div id="PhoneAlert">0/11</div>
+    </div>
+    <div id="Address">
+        <div id="AddressHint">请输入您的收货地址(校内)</div>
+        <div class="Request glyphicon glyphicon-map-marker"></div>
+        <div id="BuildAddressText"><input type="number" pattern="[0-9]*" onfocus="FocusBuildAddress(this)" onblur="UnFocusBuildAddress(this)" onkeyup="KeyBuild(this)" /></div>
+        <div id="Build">栋</div>
+        <div id="RoomAddressText"><input type="number" pattern="[0-9]*" onfocus="FocusRoomAddress(this)" onblur="UnFocusRoomAddress(this)" onkeyup="KeyRoom(this)" /></div>
+        <div id="BuildAlert">空地址</div>
+        <div id="RoomAlert">空地址</div>
+    </div>
+    <nav id="MakeSure" state="0" class="navbar-fixed-bottom">
+        <div id="Submit" onclick="Submit(this)">
+            <div>提交</div>
+        </div>
+    </nav>
+</div>

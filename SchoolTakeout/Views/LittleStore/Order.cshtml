@@ -1,0 +1,138 @@
+﻿@using SchoolTakeout.Tool;
+@using System.Data.SqlClient;
+@using System.Runtime.Serialization.Json;
+@using System.Runtime.Serialization;
+@using System.Text;
+@{
+    Layout = "~/Views/Shared/_LayoutUserPort.cshtml";
+}
+@{
+    SqlDB A = new SqlDB();
+    SqlDataReader read = A.UserGetOrder("userorder" + Request["UserAccount"]);
+    List<List<string>> show = new List<List<string>>();
+    while (read.Read())
+    {
+        List<string> arry = new List<string>();
+        for (int i = 0; i < read.FieldCount; i++)
+        {
+            arry.Add(read[i].ToString());
+        }
+        show.Add(arry);
+    }
+    A.CloseConnection();
+    DataContractJsonSerializer json = new DataContractJsonSerializer(show.GetType());
+    string szJson = "";
+    using (MemoryStream stream = new MemoryStream()) //序列化
+    {
+        json.WriteObject(stream, show);
+        szJson = Encoding.UTF8.GetString(stream.ToArray());
+    }
+}
+
+<script>
+    Date.prototype.toLocaleString = function () {
+        return this.getFullYear() + "/" + (this.getMonth() + 1) + "/" + this.getDate() + "/ " + this.getHours() + ":" + this.getMinutes() + ":" + this.getSeconds();
+    };
+
+    function ClickMore(Button) {
+        if ($(Button).attr("isclick") == "0") {
+            $(Button).siblings(".OrderedFoodul").animate({ height: 'show' });
+            $(Button).attr("isclick", "1");
+        }
+        else {
+            $(Button).siblings(".OrderedFoodul").animate({ height: 'hide' });
+            $(Button).attr("isclick", "0");
+        }
+    }
+
+     window.onload = function ()
+    {
+        var text = "@szJson";
+        var arrEntities = { 'lt': '<', 'gt': '>', 'nbsp': ' ', 'amp': '&', 'quot': '"' };
+        var t=text.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) { return arrEntities[t]; });
+        var obj = eval("(" + t + ")");
+        var i = 0;
+        while (i < obj.length) {
+            if (1) {
+                var ShopInfoList = obj[i][3].split("WT");
+                var unixTimestamp = new Date(parseFloat(obj[i][13]));
+                Time = unixTimestamp.toLocaleString();
+                var text = "<div class='OrderColumn' id='OrderColumn" + i + "'>"
+                    + "<div class='OrderShopName' id='OrderShopName" + i + "'>" + ShopInfoList[0] + "</div>"
+                    + "<div class='State' id='EndState" + i +"'>"+"订单已完成"+"</div>"
+                    + "<div class='Time' id='Time" + i +"'>"+Time+"</div>"
+                    + "<div class='More' id='More" + i +"' isclick='0' onclick='ClickMore(this)'>"+"查看详情"+"</div>"
+                    + "<ul class='OrderedFoodul' id='OrderedFoodul" + i +"'>"
+                    + "</ul>"
+                    + "<div class='OrderedID' id='OrderedID" + i +"'>"+"订单号:"+obj[i][0]+"</div>"
+                    + "<div class='OrderedPrice' id='OrderedPrice" + i +"'>"+"¥"+obj[i][8]+"</div>"
+                    + "</div>"
+                $("#Orders").append(text);
+                var FoodInfoList = obj[i][4].split("GR");
+                var j = 0;
+                while (j < FoodInfoList.length) {
+                    var FoodInfo = FoodInfoList[j].split("CDX");
+                    var li = "<li class='Orderedli' id='OrderedFood" + j +"'>"
+                        + "<div class='OrderedName' id='OrderedName" + j +"'>"+FoodInfo[0]+"</div>"
+                        + "<div class='OrderedNum' id='OrderedNum" + j +"'>"+FoodInfo[1]+"份</div>"
+                        + "</li>"
+                    $("#OrderedFoodul" + i).append(li);
+                    j++;
+                }
+            }
+            i++;
+        }
+    }
+</script>
+
+<nav class="navbar navbar-inverse navbar-fixed-bottom ">
+    <div class="container">
+        <ul class="nav navbar-nav" id="navul">
+            <li class="touchend">
+                <div id="navShopIcon" class="navIcon glyphicon glyphicon-home" aria-hidden="true">
+                </div>
+                <a href="/LittleStore/Shop?UserAccount=@ViewData["UserAccount"]&UserName=@ViewData["UserName"]&UserPhone=@ViewData["UserPhone"]&UserAddress=@ViewData["UserAddress"]">商店</a>
+            </li>
+            <li class="touchstart">
+                <div id="navOrderIcon" class="navIcon glyphicon glyphicon-shopping-cart" aria-hidden="true">
+                </div>
+                <a href="/LittleStore/Order?UserAccount=@ViewData["UserAccount"]&UserName=@ViewData["UserName"]&UserPhone=@ViewData["UserPhone"]&UserAddress=@ViewData["UserAddress"]">订单</a>
+            </li>
+            <li class="touchend">
+                <div id="navMineIcon" class="navIcon glyphicon glyphicon-user" aria-hidden="true">
+                </div>
+                <a href="/LittleStore/Mine?UserAccount=@ViewData["UserAccount"]&UserName=@ViewData["UserName"]&UserPhone=@ViewData["UserPhone"]&UserAddress=@ViewData["UserAddress"]">我的</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div id="Order">
+    <div id="OrderTitle">
+        <div id="OrderIcon" class="TitleIcon glyphicon glyphicon-shopping-cart" aria-hidden="true">
+        </div>
+        <div id="OrderText" class="TitleText">
+            我的订单
+        </div>
+    </div>
+    <div id="Orders">
+        @*<div class="OrderColumn" id="OrderColumn">
+            <div class="OrderShopName" id="OrderShopName">一对百合</div>
+            <div class="State" id="EndState">订单已完成</div>
+            <div class="Time" id="Time">2017.11.5</div>
+            <div class="More" id="More" isclick="0" onclick="ClickMore(this)">查看详情</div>
+            <ul class="OrderedFoodul" id="OrderedFoodul">
+                <li class="Orderedli" id="OrderedFood">
+                    <div class="OrderedName" id="OrderedName">伊莉雅</div>
+                    <div class="OrderedNum" id="OrderedNum">1份</div>
+                </li>
+                <li class="Orderedli" id="OrderedFood">
+                    <div class="OrderedName" id="OrderedName">伊莉雅</div>
+                    <div class="OrderedNum" id="OrderedNum">1份</div>
+                </li>
+            </ul>
+            <div class="OrderedID" id="OrderedID">订单号:11111111111111111111</div>
+            <div class="OrderedPrice" id="OrderedPrice">¥1.00</div>
+        </div>*@
+    </div>
+</div>

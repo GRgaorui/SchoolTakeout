@@ -1,0 +1,110 @@
+﻿
+@{
+    ViewBag.Title = "Login";
+}
+@{
+    Layout = null;
+}
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+@Styles.Render("~/Content/css")
+@Scripts.Render("~/bundles/modernizr")
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - 简单点外卖</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <script type="text/javascript" src="~/www/scripts/platformOverrides.js"></script>
+    <script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js"></script>
+</head>
+<body>
+   
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <h2>登陆</h2>
+    <form id="LoginForm" style="font-size:20px;">
+        账户：<input type="text" style="width:250px;height:50px;border:3px solid black" id="account"/><br /><br />
+        密码：<input type="password" style="width:250px;height:50px;border:3px solid black" id="password" /><br />
+        <br /><br /><br /><br />
+              <input type="button" value="登陆" style="width:90px;height:50px;" onclick="abc()" />
+    </form>
+
+    <script>
+        function abcd(account) {
+            localStorage.setItem("Login", "True");
+            localStorage.setItem("Account", account);
+        }
+    </script>
+    <script>
+        function abc() {
+            var a = document.getElementById("account").value;
+            var b = document.getElementById("password").value;
+            var pass = md5(b);
+            $.ajax({
+                type: "post",
+                url: "/ShopManage/LoginAccoount",
+                data: {"account":a},
+                dataType: 'TEXT',
+                async: false,
+                success: function (result) {
+                    if (result == "True") {
+                        $.ajax({
+                            type: "post",
+                            url: "/ShopManage/LoginPassword",
+                            data: {"account":a, "password":pass},
+                            dataType: 'TEXT',
+                            async: false,
+                            success: function (result) {
+                                if (result == "True") {
+                                    abcd(a);
+                                    window.location.href = "/ShopManage/OrderMain?Account=" + a;
+                                }
+                                else 
+                                {
+                                    alert("密码错误");
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        alert("账号未注册");
+                    }
+                }
+            });
+        }
+    </script>
+    <script>
+        window.onload = function ()
+        {
+            if (localStorage.getItem("Login") == "True")
+                window.location.href = "/ShopManage/OrderMain?Account=" + localStorage.getItem("Account");
+        }
+    </script>
+    <!--<script type="text/javascript">
+          (function () {
+              "use strict";
+
+              document.addEventListener('deviceready', onDeviceReady.bind(this), false);
+              function onDeviceReady() {
+                  // 处理 Cordova 暂停并恢复事件
+                  document.addEventListener('pause', onPause.bind(this), false);
+                  document.addEventListener('resume', onResume.bind(this), false);
+
+                  // TODO: Cordova 已加载。在此处执行任何需要 Cordova 的初始化。
+              };
+
+              function onPause() {
+                  // TODO: 此应用程序已挂起。在此处保存应用程序状态。
+              };
+
+              function onResume() {
+                  // TODO: 此应用程序已重新激活。在此处还原应用程序状态。
+              };
+
+          })();
+    </script>-->
+</body>
+</html>

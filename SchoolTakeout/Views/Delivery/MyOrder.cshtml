@@ -1,0 +1,89 @@
+﻿@{
+    Layout = "~/Views/Shared/_DeliveryLayout.cshtml";
+}
+@{
+    ViewBag.Title = "MyOrder";
+}
+
+@Scripts.Render("~/bundles/jquery")
+@using System.Data.SqlClient;
+@using SchoolTakeout.Tool;
+@using System.Data.SqlClient;
+@using System.Runtime.Serialization.Json;
+@using System.Runtime.Serialization;
+@using System.Text;
+
+
+@{
+    SqlDB A = new SqlDB();
+    SqlDataReader read = A.GetOrder("ThirdOrder");
+    List<List<string>> show = new List<List<string>>();
+    while (read.Read())
+    {
+        List<string> arry = new List<string>();
+        for (int i = 0; i < read.FieldCount; i++)
+        {
+            arry.Add(read[i].ToString());
+        }
+        show.Add(arry);
+    }
+    A.CloseConnection();
+    DataContractJsonSerializer json = new DataContractJsonSerializer(show.GetType());
+    string szJson = "";
+    using (MemoryStream stream = new MemoryStream()) //序列化
+    {
+        json.WriteObject(stream, show);
+        szJson = Encoding.UTF8.GetString(stream.ToArray());
+    }
+}
+
+
+<div class="Minetopnav">
+    <div style="margin-top:20px">
+        <p class="DataStyle">起始日期:<input type="date" id="startdata" /></p>
+    </div>
+    <div>
+        <p class="DataStyle">结算日期:<input type="date" id="enddata" /></p>
+    </div>
+    <div>
+        <input class="buttonOK" type="button" onclick="SelectInfo()" value="OK" />
+        <div class="totstyle"><p>总计:&nbsp;</p><p id="total">0</p></div>
+    </div>
+</div>
+<div class="row" style="margin-top:160px" id="R2"></div>
+
+<script>
+    function SelectInfo() {
+        var startdata = document.getElementById("startdata").value;
+        var enddata = document.getElementById("enddata").value;
+        var startTime = (new Date(startdata)).getTime();
+        var endTime = (new Date(enddata)).getTime();
+        $.ajax({
+            type: "GET",
+            url: "/Delivery/Select",
+            data: { "start": startTime, "end": endTime, "number": @ViewData["Account"] },
+            dataType: 'TEXT',
+            async: false,
+            success: function (result) {
+                var text = result;
+                alert(text);
+                var arrEntities = { 'lt': '<', 'gt': '>', 'nbsp': ' ', 'amp': '&', 'quot': '"' };
+                var t = text.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) { return arrEntities[t]; });
+                var obj = eval("(" + t + ")");
+                $("#total").empty();
+                $("#total").append(obj.length);
+                var i = 0;
+                $("#R2").empty();
+                while (i < obj.length) {
+                    var date = new Date(parseInt(obj[i][4])).toLocaleString();
+                    var storeinfo = obj[i][2].split("WT");
+                    var Foodinfo = obj[i][1].replace(/GR/g, "<br>").replace(/CDX/g, " ");
+                    var t = "<div class='page'><div class='fontstyle';>订单号:" + obj[i][0] + "</div><div class='fontstyle'><div>商品:<br><p class='infostyle'>" + Foodinfo + "</p></div><div>商家:" + storeinfo[0] + "</div></div><div class='fontstyle';><div>客户姓名:</div><div>客户地址:</div></div><div class='position'></div><div class='fontstyle'>时间:" + date + "</div></div>";
+                    $("#R2").append(t);
+                    i++;
+                }
+            }
+        });         
+    }
+   
+</script>

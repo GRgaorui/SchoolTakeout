@@ -1,0 +1,75 @@
+﻿
+@{
+    ViewBag.Title = "配送员注册";
+}
+<form id="form1" runat="server" enctype="multipart/form-data">
+
+    <div class="form-group">
+        <label for="Name" class="col-sm-2 control-label">配送员名字</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="Name" name="Name">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="Account" class="col-sm-2 control-label">账号</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="Account" name="Account">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="Password" class="col-sm-2 control-label">密码</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" id="Password" name="Password">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="Password" class="col-sm-2 control-label">确认密码</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" id="CheckPassword" name="CheckPassword" onkeyup="check()">
+        </div>
+        <div id="showmess" style="color:red"></div>
+    </div>
+
+    <div style="margin-left:17%">
+        <input type="button" class="btn btn-info" value="提交" onclick="present()" id="sumbit" disabled="true" />
+    </div>
+</form>
+<script>
+    function check() {
+        var pass = document.getElementById("Password").value;
+        var checkpass = document.getElementById("CheckPassword").value;
+        if (pass != checkpass) {
+            document.getElementById("showmess").innerText = "两次密码不一致";
+            document.getElementById("sumbit").disabled = "true";
+        }
+        else {
+            document.getElementById("showmess").innerText = "";
+            document.getElementById("sumbit").disabled = "";
+        }
+    }
+
+    function present() {
+        var name = document.getElementById("Name").value;
+        var account = document.getElementById("Account").value;
+        var password = document.getElementById("Password").value;
+        var pass = md5(password);
+        $.ajax({
+            type: "post",
+            url: "/CreatAccount/creatAccountDelivery",
+            data: { "name": name, "account": account, "password": pass },
+            dataType: 'JSON',
+            async: false,
+            success: function (result) {
+                if (result == 1) {
+                    alert("注册成功");
+                }
+                else if (result == 0) {
+                    alert("注册失败");
+                }
+            }
+        });
+    }
+</script>

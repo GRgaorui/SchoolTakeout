@@ -1,0 +1,140 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutUserPort.cshtml";
+}
+
+<script>
+    function JumpOrder() {
+        window.location.href = "/LittleStore/Order?UserAccount=@ViewData["UserAccount"]&UserName=@ViewData["UserName"]&UserPhone=@ViewData["UserPhone"]&UserAddress=@ViewData["UserAddress"]";
+    }
+
+    //指定位置插入小数点
+    function insert_flg(str, flg, sn) {
+        var newstr = "";
+        var tmp = str.toString().substring(0, sn);
+        newstr = tmp + flg + str.toString().substring(sn, str.length);
+        return newstr;
+    }
+
+    function NewOrderPayMoney(button) {
+        var OrderID = "@ViewData["OrderNumber"]";
+        var UserAccount = "@ViewData["UserAccount"]";
+        var ShopAccount = "@ViewData["ShopID"]";
+        var ShopInfo = "@ViewData["ShopName"]" + "WT" + "@ViewData["ShopAddress"]" + "WT" +  "@ViewData["ShopID"]";
+        {
+            var lis = document.getElementById("ThisOrderFoodul").childNodes;
+            var FoodInfo = $(lis[0]).find(".ThisOrderFoodName").text() + "CDX" + $(lis[0]).find(".ThisOrderFoodNumText").text() + "CDX" + $(lis[0]).find(".ThisOrderFoodPriceText").text();
+            for (i = 1; i < lis.length; i++) {
+                FoodInfo = FoodInfo + "GR" + $(lis[i]).find(".ThisOrderFoodName").text() + "CDX" + $(lis[i]).find(".ThisOrderFoodNumText").text() + "CDX" + $(lis[i]).find(".ThisOrderFoodPriceText").text();
+            }
+        }
+        var Price = "@ViewData["TotalPrice"]";
+        var PackingPrice = "@ViewData["PackingPrice"]";
+        var ClientInfo = "@ViewData["UserName"]" + "WC" +"@ViewData["UserPhone"]" + "WC" + "@ViewData["UserAddress"]";
+        var RealtimeState = 1;
+        var Time = new Date().getTime();
+        var remark = $("#Remark").val();
+        $.ajax({
+            type: "post",
+            url: "/LittleStore/CreatOrder",
+            data: { "OrderId": OrderID, "UserAccount": UserAccount, "ShopAccount": ShopAccount, "ShopInfo": ShopInfo, "FoodInfo": FoodInfo, "FoodMoney": FoodMoney, "PackingMoney": PackingMoney, "DistributionPrice": DistributionPrice, "TotalPrice": TotalPrice, "ClientInfo": ClientInfo, "Remark": remark ,"RealtimeState": RealtimeState, "EndState": "0", "Time": Time },
+            dataType: 'TEXT',
+            async: false,
+            success: function (result) {
+                alert("成功");}
+        });
+    }
+        var ShopID = "@ViewData["ShopID"]";
+        var UserName = "@ViewData["UserName"]";
+        var UserAddress = "@ViewData["UserAddress"]";
+        var ShopAddress = "@ViewData["ShopAddress"]";
+        var UserPhone = "@ViewData["UserPhone"]";
+        var ShopName = "@ViewData["ShopName"]";
+        var FoodMoney = "@ViewData["FoodMoney"]";
+        var PackingMoney = "@ViewData["PackingMoney"]";
+        var DistributionPrice = "@ViewData["DistributionPrice"]"
+        var TotalPrice = "@ViewData["TotalPrice"]";
+        var OrderNumber = "@ViewData["OrderNumber"]";
+        var FoodList = "@ViewData["FoodList"]";
+        var NumList = "@ViewData["NumList"]";
+        var NameList = "@ViewData["NameList"]";
+        var PriceList = "@ViewData["PriceList"]";
+    window.onload = function () {
+        var foodlist = FoodList.split("WT");
+        var numlist = NumList.split("WT");
+        var namelist = NameList.split("WT");
+        var pricelist = PriceList.split("WT");
+
+        $("#PayMoneyText").text("@ViewData["TotalPrice"]");
+
+        //生成食物列表
+        for (var i = 0; i < foodlist.length; i++){
+            var foodlistul = "<li class='ThisOrderFood' id='ThisOrderFood'>"
+                + "<div class='ThisOrderFoodName' id='ThisOrderFoodName'>" + namelist[i] + "</div>"
+                    +"<div class='ThisOrderFoodNum' id= 'ThisOrderFoodNum'>"
+                + "<div>X</div>"
+                + "<div class='ThisOrderFoodNumText' id='ThisOrderFoodNumText'>" + numlist[i] + "</div>"
+            +"</div>"
+                +"<div class='ThisOrderFoodPrice' id='ThisOrderFoodPrice'>"
+                + "<div>¥</div>"
+                + "<div class='ThisOrderFoodPriceText' id='ThisOrderFoodPriceText'>" + pricelist[i] + "</div>"
+                +"</div>"
+                + "</li>"
+            $("#ThisOrderFoodul").append(foodlistul);
+        }
+    }
+</script>
+
+<div id="NowOrder">
+    <div id="Top" class="navbar-fixed-top" >
+    <div style="width:110px;" onclick="JumpOrder()">
+        <div id="Esc" class="glyphicon glyphicon-list-alt">
+        </div>
+        <div id="EscText"> 
+            我的订单   
+        </div> 
+    </div>
+    </div> 
+    <div id="State">
+        <div id="ShopPic"></div> 
+        <div id="OrderState" style="display:none;">
+            正在配送···    
+        </div> 
+    </div> 
+    <div id="ThisOrderImfo">
+        <div id="ShopName">@ViewData["ShopName"]</div> 
+        <div id="ThisOrderFoodEvent">             
+            <ul id="ThisOrderFoodul"></ul>   
+        </div> 
+        <div id="PhoneMoney">    
+            <div id="ShopPhone">商家联系电话:@ViewData["ShopID"]</div> 
+            <div id="PayMoney">
+                <div>¥</div> 
+                <div id="PayMoneyText"></div>   
+            </div> 
+        </div> 
+    </div> 
+    <div id="PackingImfo">
+        <div class="Column" id="OrderNum">
+            <div class="Hint" id="OrderNumHint">订单号</div> 
+            <div class="PackingImfoText" id="OrderNumText">@ViewData["OrderNumber"]</div> 
+        </div> 
+        <div class="Column" id="OrderUserName">
+            <div class="Hint">我的称呼</div> 
+            <div class="PackingImfoText" id="OrderUserNameText">@ViewData["UserName"].ToString()</div> 
+        </div> 
+        <div class="Column" id="OrderUserPhoneNum"> 
+            <div class="Hint">我的电话</div> 
+            <div class="PackingImfoText" id="OrderUserPhoneNumText">@ViewData["UserPhone"].ToString()</div> 
+        </div> 
+        <div class="Column" id="OrderAcceptAddress"> 
+            <div class="Hint">收获地址</div> 
+            <div class="PackingImfoText" id="OrderAcceptAddressText">@ViewData["UserAddress"].ToString()</div> 
+        </div> 
+        <div class="Column">备注:
+            <textarea id="Remark" ></textarea>
+        </div>
+    </div>
+    <nav class="navbar-fixed-bottom" id="MakeSurePay" onclick="NewOrderPayMoney(this)">
+        确定订单并支付
+    </nav>
+</div>

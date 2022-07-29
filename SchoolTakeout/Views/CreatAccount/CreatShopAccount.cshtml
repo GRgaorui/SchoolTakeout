@@ -1,0 +1,237 @@
+﻿
+@{
+    ViewBag.Title = "商家注册";
+}
+<style>
+    .file {
+        position: relative;
+        display: inline-block;
+        background: #D0EEFF;
+        border: 1px solid #99D3F5;
+        border-radius: 4px;
+        padding: 4px 12px;
+        overflow: hidden;
+        color: #1E88C7;
+        text-decoration: none;
+        text-indent: 0;
+        line-height: 20px;
+    }
+
+        .file input {
+            position: absolute;
+            font-size: 100px;
+            right: 0;
+            top: 0;
+            opacity: 0;
+        }
+
+        .file:hover {
+            background: #AADFFD;
+            border-color: #78C3F3;
+            color: #004974;
+            text-decoration: none;
+        }
+</style>
+<form id="form1" runat="server" enctype="multipart/form-data">
+
+    
+    <div class="form-group">
+        <label for="Account" class="col-sm-2 control-label">账号</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="Account" name="Account">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="Password" class="col-sm-2 control-label">密码</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" id="Password" name="Password" onchange="ChangePass(this)">
+        </div>
+    </div>
+
+    <script>
+        function ChangePass(pass)
+        {
+            pass.value = md5(pass.value);
+        }
+    </script>
+
+    <div class="form-group">
+        <label for="Password" class="col-sm-2 control-label">确认密码</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" id="CheckPassword" name="CheckPassword" onchange="checkPassword(this)">
+        </div>
+        <div id="showmess" style="color:red"></div>
+    </div>
+
+   <script>
+       function checkPassword(checkpass) {
+           checkpass.value = md5(checkpass.value);
+           var pass = document.getElementById("Password").value;
+           var checkpass = document.getElementById("CheckPassword").value;
+           
+           if (pass != checkpass) {
+               document.getElementById("showmess").innerText = "两次密码不一致";
+               document.getElementById("sumbit").disabled = "true";
+           }
+           else {
+               document.getElementById("showmess").innerText = "";
+               document.getElementById("sumbit").disabled = "";
+           }
+       }
+  </script>
+
+
+    <div class="form-group">
+        <label for="Name" class="col-sm-2 control-label">商家名</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="Name" name="Name">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="Address" class="col-sm-2 control-label">商家地址</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="Address" name="Address">
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="DistributionPrice" class="col-sm-2 control-label">配送费</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="DistributionPrice" name="DistributionPrice" onchange="returnFloat(this)">
+        </div>
+    </div>
+
+    <script>
+        function returnFloat(num) {
+            var value = Math.round(parseFloat(num.value) * 100) / 100;
+            var xsd = value.toString().split(".");
+            if (xsd.length == 1) {
+                value = value.toString() + ".00";
+            }
+            if (xsd.length > 1) {
+                if (xsd[1].length < 2) {
+                    value = value.toString() + "0";
+                }
+            }
+            num.value = value;
+        }
+    </script>
+
+    <div class="form-group">
+        <label for="Img" class="col-sm-2 control-label">商家图片</label>
+        <div class="col-sm-10">
+            <a href="javascript:;" class="file">
+                选择文件
+                <input type="file" name="Img" id="Img" accept="image/jpeg, image/png" onchange="imgPreview(this)">
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function imgPreview(fileDom) {
+            //判断是否支持FileReader
+            if (window.FileReader) {
+                var reader = new FileReader();
+            } else {
+                alert("您的设备不支持图片预览功能，如需该功能请升级您的设备！");
+            }
+
+            //获取文件
+            var file = fileDom.files[0];
+            var imageType = /^image\//;
+            //是否是图片
+            if (!imageType.test(file.type)) {
+                alert("请选择图片！");
+                return;
+            }
+            //读取完成
+            reader.onload = function (e) {
+                //获取图片dom
+                var img = document.getElementById("preview");
+                //图片路径设置为读取的图片
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    </script>
+
+
+    <div class="col-sm-12">
+        <img id="preview" style="position:relative; width:50%" />
+    </div>
+
+
+    <div style="margin-left:17%">
+        <input type="button" class="btn btn-info" value="提交" onclick="present()" id="sumbit" disabled="true"/>
+    </div>
+</form>
+<script>
+  
+    function present() {
+        if (check() == false)
+            return;      
+        var form = document.getElementById("form1");
+        var formdata = new FormData(form);
+        //var name = document.getElementById("Name").value;
+        //var account = document.getElementById("Account").value;
+        //var password = document.getElementById("Password").value;
+        //var pass = md5(password);
+        $.ajax({
+            type: "post",
+            url: "/CreatAccount/creatAccountShop",
+            data: formdata,
+            async: false,
+            dataType: "text",
+            processData: false,
+            contentType: false,    
+            success: function (result) {
+                //alert(result);
+                if (result == 1) {
+                    alert("注册成功");
+                    window.location.href = "/Home/Index";
+                }
+                else if (result == 0) {
+                    alert("注册失败");
+                }
+            }
+        });
+    }
+</script>
+<script>
+    function check() {
+        var Name = document.getElementById("Name").value;
+        var Address = document.getElementById("Address").value;
+        var DistributionPrice = document.getElementById("DistributionPrice").value;
+        var Account = document.getElementById("Account").value;
+        var Password = document.getElementById("Password").value;
+        var img = document.getElementById("Img").files[0];
+
+        if (Name == null || Name == "") {
+            alert("请输入商家名称");
+            return false;
+        }
+        else if (Address == null || Address == "") {
+            alert("请填写商家地址");
+            return false;
+        }
+        else if (DistributionPrice == null || DistributionPrice == "") {
+            alert("请上传商家配送费");
+            return false;
+        }
+        else if (Account == null || Account == "") {
+            alert("请填写商家账号");
+            return false;
+        }      
+        else if (Password == null || Password == "") {
+            alert("请输入密码");
+            return false;
+        }
+        else if (img == null) {
+            alert("请上传商家图片");
+            return false;
+        }
+        else return true;
+    }
+</script>

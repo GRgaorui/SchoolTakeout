@@ -1,0 +1,171 @@
+﻿#Imfo{
+    width: 100%;
+    height: auto;
+    border-top: thick solid #d0d0d0;
+}
+
+#WelCome {
+    text-align: center;
+    background-color: #FFCA28;
+    height: 200px;
+    font-size: 30px;
+    color: #FFF8E1;
+}
+
+#WelCome>div {
+    letter-spacing: 5px;
+    margin: auto;
+    padding-top: 80px;
+}
+
+#Phone, #Address, #Name {
+    margin-bottom: 5px;
+    padding: 20px 0 20px 10px;
+    background-color: #ffffff;
+}
+
+#PhoneHint, #AddressHint, #NameHint {
+    width: 180px;
+    font-size: 15px;
+    padding: 10px 0 0px 5px;
+    margin: 0 0 5px 39px;
+    color: #d0d0d0;
+}
+
+#NameHint {
+    width: 160px;
+}
+
+#PhoneHint {
+    width: 180px;
+}
+
+#AddressHint {
+    width: 190px;
+}
+
+.Request {
+    font-size: 20px;
+    color: #FFF8E1;
+    background-color: #FFCA28;
+    width: 31px;
+    border-radius: 8px;
+    padding:3px 5px 7px 5px;
+    letter-spacing: 3px;
+}
+
+#PhoneNumText, #BuildAddressText, #NameText {
+    margin: -29px 0 0 39px;
+}
+
+#Student {
+    width: 40px;
+    height: 30px;
+    margin: -30px 0 0 40%;
+    padding-top: 5px;
+}
+
+#Build {
+    width: 30px;
+    height: 30px;
+    margin: -29px 0 0 26%;
+    text-align: center;
+    padding-top: 3px;
+}
+
+#RoomAddressText {
+    margin: -30px 0 0 36%;
+}
+
+#NameText > input {
+    text-align: center;
+    height: 30px;
+    width: 30%;
+    border: solid thin #d0d0d0;
+    border-radius: 5px;
+    outline: 0;
+}
+
+#PhoneNumText > input {
+    text-align: center;
+    height: 30px;
+    width: 60%;
+    border: solid thin #d0d0d0;
+    border-radius: 5px;
+    outline: 0;
+}
+
+#BuildAddressText > input {
+    text-align: center;
+    height: 30px;
+    width: 15%;
+    border: solid thin #d0d0d0;
+    border-radius: 5px;
+    outline: 0;
+}
+
+#RoomAddressText > input {
+    text-align: center;
+    height: 30px;
+    width: 40%;
+    border: solid thin #d0d0d0;
+    border-radius: 5px;
+    outline: 0;
+}
+
+#NameText > input:focus, #PhoneNumText > input:focus, #BuildAddressText > input:focus, #RoomAddressText > input:focus {
+    height: 30px;
+    border: solid thin #FFCA28;
+    border-radius: 5px;
+    outline: 0;
+}
+
+#NameAlert, #PhoneAlert, #BuildAlert, #RoomAlert {
+    display: none;
+    border: solid thin #d0d0d0;
+    border-radius: 5px;
+    color: #d0d0d0;
+    text-align: center;
+    height: 30px; 
+    padding-top: 3px;
+}
+
+#NameAlert {
+    font-size: 15px;
+    width: 70px;
+    margin: -30px 0 0 50%;
+}
+
+#PhoneAlert {
+    font-size: 17px;
+    width: 55px;
+    margin: -30px 0 0 67%;
+}
+
+#BuildAlert {
+    font-size: 15px;
+    width: 70px;
+    margin: -30px 0 0 64%;
+}
+
+#RoomAlert {
+    font-size: 15px;
+    width: 70px;
+    margin: -30px 0 0 64%;
+}
+
+#MakeSure {
+    background-color: #d0d0d0;
+    font-size: 20px;
+    color: #ededed;
+    height: 40px;
+}
+
+#Submit {
+    text-align: center;
+}
+
+#Submit > div {
+    margin: auto;
+    padding-top: 5px; 
+}

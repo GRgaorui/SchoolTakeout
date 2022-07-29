@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+</head>
+<body>
+    <div id="deviceready" >此处显示内容。</div>
+    <input type="button" value="123" onclick="abc()" />
+    <input type="button" value="播放" onclick="playAudio()" />
+    <input type="button" value="储存" onclick="abcd()" />
+    <input type="button" value="显示" onclick="showLocalStorage()" />
+    <input type="button" value="蓝牙" onclick="qwer()" />
+    <script>
+        var localStorage = window.localStorage;	
+        function abcd() {
+            localStorage.setItem("Name", "John");
+            localStorage.setItem("Job", "Developer");
+            localStorage.setItem("Project", "Cordova Project");
+        }
+        function showLocalStorage() {
+           alert(localStorage.getItem("Name"));      
+        }
+        var ble = window.bluetoothle;
+        function qwer() {
+            ble.startScan([], function (device) {
+                console.log(JSON.stringify(device));
+            }, function (device) {
+                console.log("shibai");
+            });
+
+            setTimeout(ble.stopScan,
+                5000,
+                function () { console.log("Scan complete"); },
+                function () { console.log("stopScan failed"); }
+            );
+        }
+    </script>
+
+    <script>
+        function abc() {
+            function alertDismissed() {
+                // do something
+            }
+
+            navigator.notification.alert(
+                'You are the winner!',  // message
+                alertDismissed,         // callback
+                'Game Over',            // title
+                'Done'                  // buttonName
+            );
+        }
+    </script>
+    <script>
+        function playAudio() {
+            abc();
+            // Play the audio file at url
+            var my_media = new Media("/android_asset/www/video/abc.mp3",
+                // success callback
+                function () {
+                    console.log("playAudio():Audio Success");
+                },
+                // error callback
+                function (err) {
+                    console.log("playAudio():Audio Error: " + err);
+                }
+            );
+            // Play audio
+            my_media.play();
+        }
+    </script>
+
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="scripts/platformOverrides.js"></script>
+    <script type="text/javascript" src="scripts/test.js"></script>
+</body>
+</html>

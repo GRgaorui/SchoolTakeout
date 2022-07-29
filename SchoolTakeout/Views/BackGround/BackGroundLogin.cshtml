@@ -1,0 +1,64 @@
+﻿@{
+    ViewBag.Title = "BackGroundLogin";
+}
+
+<!DOCTYPE html>
+<title>@ViewBag.Title - 简单点外卖</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<body>
+    <div style="width:400px; height: 375px;position:relative;left: 35%;background-color:#969595;">
+        <h2 align="center">简单点管理员</h2>
+        <br />
+        <form  id="LoginForm" style="font-size:20px;">
+            账户：<input type="text" style="width:250px;height:50px;border:3px solid black" id="account" /><br /><br />
+            密码：<input type="password" style="width:250px;height:50px;border:3px solid black" id="password" /><br />
+            <br /><br /><br />
+            <input type="button" value="登陆" style="width:90px;height:50px; margin-left:38%;" onclick="Verify()" />
+        </form>
+    </div>
+</body>
+<script>
+    function log()
+    {
+        sessionStorage.setItem('login', 'true');
+        sessionStorage.setItem('Account', Account);
+    }
+</script>
+<script>
+    function Verify() {
+            var a = document.getElementById("account").value;
+            var b = document.getElementById("password").value;
+            var pass = md5(b);
+            $.ajax({
+                type: "post",
+                url: "/BackGround/LoginAccoount",
+                data: {"account":a},
+                dataType: 'TEXT',
+                async: false,
+                success: function (result) {
+                    if (result == "True") {
+                        $.ajax({
+                            type: "post",
+                            url: "/ShopManage/LoginPassword",
+                            data: {"account":a, "password":pass},
+                            dataType: 'TEXT',
+                            async: false,
+                            success: function (result) {
+                                if (result == "True") {
+                                    abcd(a);
+                                    window.location.href = "/ShopManage/OrderMain?Account=" + a;
+                                }
+                                else
+                                {
+                                    alert("密码错误");
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        alert("账号未注册");
+                    }
+                }
+            });
+        }
+</script>

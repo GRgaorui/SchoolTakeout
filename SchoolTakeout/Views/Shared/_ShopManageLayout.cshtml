@@ -1,0 +1,117 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>@ViewBag.Title -xxxx外卖</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link rel="stylesheet" type="text/css" href="~/Content/Layout.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/Shop.css" />
+    @*<script type="text/javascript" src="~/www/cordova.js"></script>*@
+    <script type="text/javascript" src="~/www/scripts/platformOverrides.js"></script>
+    <script type="text/javascript" src="~/Scripts/Shop/Shop.js"></script>
+</head>
+<body>
+
+    <div class="navbar navbar-fixed-bottom ">
+        <div class="container">
+            <div id="BottomNav" class="navbar">
+                <ul id="MainNav" class="nav nav-pills ">
+                    <li><a href="/ShopManage/OrderMain?Account=@ViewData["Account"].ToString()">订单</a></li>
+                    <li><a href="/ShopManage/ShopSet?Account=@ViewData["Account"].ToString()">店铺管理</a></li>
+                    <li><a href="/ShopManage/Set?Account=@ViewData["Account"].ToString()">设置</a></li>
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year -简单点外卖</p>
+        </footer>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    @using SchoolTakeout.Tool;
+    @using System.Data.SqlClient;
+    @using System.Runtime.Serialization.Json;
+    @using System.Runtime.Serialization;
+    @using System.Text;
+   <!--  <script>
+         function playAudio() {
+             // Play the audio file at url
+             var my_media = new Media("/android_asset/www/video/tixing.mp3",
+                 // success callback
+                 function () {
+                     console.log("playAudio():Audio Success");
+                 },
+                 // error callback
+                 function (err) {
+                     console.log("playAudio():Audio Error: " + err);
+                 }
+             );
+             // Play audio
+             my_media.play();
+         }
+    </script>
+
+   <script type="text/javascript">
+         (function () {
+             "use strict";
+
+             document.addEventListener('deviceready1', onDeviceReady.bind(this), false);
+             function onDeviceReady() {
+                 // 处理 Cordova 暂停并恢复事件
+                 document.addEventListener('pause', onPause.bind(this), false);
+                 document.addEventListener('resume', onResume.bind(this), false);
+
+                 // TODO: Cordova 已加载。在此处执行任何需要 Cordova 的初始化。
+                 var parentElement = document.getElementById('deviceready');
+                 var listeningElement = parentElement.querySelector('.listening');
+                 var receivedElement = parentElement.querySelector('.received');
+                 listeningElement.setAttribute('style', 'display:none;');
+                 receivedElement.setAttribute('style', 'display:block;');
+             };
+
+             function onPause() {
+                 // TODO: 此应用程序已挂起。在此处保存应用程序状态。
+             };
+
+             function onResume() {
+                 // TODO: 此应用程序已重新激活。在此处还原应用程序状态。
+             };
+
+         })();
+    </script>-->
+    <script>
+       //  var localStorage = window.localStorage;
+         var abcd = @ViewData["Account"].ToString();
+         function updata() {
+             $.ajax({
+                 type: "post",
+                 url: "/ShopManage/Updata",
+                 data: { "Account": abcd },
+                 dataType: 'JSON',
+                 async: false,
+                 success: function (result) {
+                     if (result > 0) {
+                        
+                         window.location.href = "/ShopManage/OrderMain?Account=@ViewData["Account"].ToString()";
+                     }
+                     else if (result == 0) {
+                     }
+                 }
+             });
+         }
+
+    </script>
+</body>
+
+
+</html>

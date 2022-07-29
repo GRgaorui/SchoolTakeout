@@ -1,0 +1,238 @@
+﻿
+@{
+    ViewBag.Title = "CreateFood";
+}
+<h2>@ViewData["Account"]</h2>
+<style>
+    .file {
+        position: relative;
+        display: inline-block;
+        background: #D0EEFF;
+        border: 1px solid #99D3F5;
+        border-radius: 4px;
+        padding: 4px 12px;
+        overflow: hidden;
+        color: #1E88C7;
+        text-decoration: none;
+        text-indent: 0;
+        line-height: 20px;
+    }
+
+        .file input {
+            position: absolute;
+            font-size: 100px;
+            right: 0;
+            top: 0;
+            opacity: 0;
+        }
+
+        .file:hover {
+            background: #AADFFD;
+            border-color: #78C3F3;
+            color: #004974;
+            text-decoration: none;
+        }
+</style>
+
+
+<h2 style="text-align:center">新建商品</h2>
+<div class="col-md-offset-4" style="margin-left: 37%;">
+    <form id="form1" runat="server" enctype="multipart/form-data">
+
+        <div class="form-group">
+            <label for="Name" class="col-sm-2 control-label">商品名</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="Name" name="Name">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="Type" class="col-sm-2 control-label">类别</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="Type" name="Type">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="Price" class="col-sm-2 control-label">价格</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="Price" name="Price" onchange="returnFloat(this)">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="PackingPrice" class="col-sm-2 control-label">打包费</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="PackingPrice" name="PackingPrice" onchange="returnFloat(this)">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="col-sm-2 control-label">商品状态</label>
+            <div class="col-sm-10">
+                <label class="radio-inline">
+                    <input type="radio" name="FoodState" id="inlineRadio1" value="上架"> 上架
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="FoodState" id="inlineRadio2" value="下架"> 下架
+                </label>               
+            </div>
+        </div>
+
+      
+        <div class="form-group">
+            <label for="Introduce" class="col-sm-12 control-label">商品介绍</label>
+            <div class="col-sm-12 col-lg-offset-2">
+                <textarea class="form-control" id="Introduce" name="Introduce"></textarea>
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label for="Img" class="col-sm-2 control-label">商品图片</label>
+            <div class="col-sm-10">
+                <a href="javascript:;" class="file">
+                    选择文件
+                    <input type="file" name="Img" id="Img" accept="image/jpeg, image/png" onchange="imgPreview(this)">
+                </a>
+            </div>
+        </div>
+
+        <div class="col-sm-12">
+            <img id="preview" style="position:relative; width:50%" />
+        </div>
+
+        <div style="margin-left:17%" class="col-sm-10">
+            <input type="button" class="btn btn-info" value="上传" onclick="abc()" />
+        </div>
+    </form>
+</div>
+
+<script>
+    function returnFloat(num) {
+        var value = Math.round(parseFloat(num.value) * 100) / 100;
+        var xsd = value.toString().split(".");
+        if (xsd.length == 1) {
+            value = value.toString() + ".00";
+        }
+        if (xsd.length > 1) {
+            if (xsd[1].length < 2) {
+                value = value.toString() + "0";
+            }
+        }
+        num.value = value;
+    }
+</script>
+
+<script>
+    function check() {
+        var name = document.getElementById("Name").value;       
+        var type = document.getElementById("Type").value;      
+        var price = document.getElementById("Price").value;       
+        var packingPrice = document.getElementById("PackingPrice").value;     
+        var introduce = document.getElementById("Introduce").value;
+        var img = document.getElementById("Img").files[0];
+       
+        if (name == null || name == "") {
+            alert("请输入商品名称");
+            return false;
+        }
+        else if (type == null || type =="") {
+            alert("请填写商品类别");
+            return false;
+        }
+        else if (price == null || price == "") {
+            alert("请上传商品价格");
+            return false;
+        }
+        else if (packingPrice == null || packingPrice == "") {
+            alert("请填写打包费价格");
+            return false;
+        }
+        else if (foodState() != true) {
+            alert("请选择商品状态");
+            return false;
+        }
+        else if (introduce == null || introduce == "") {
+            alert("请输入商品介绍");
+            return false;
+        }
+        else if (img == null) {
+            alert("请上传商品图片");
+            return false;
+        }  
+        else return true;
+    }
+
+    function foodState() {
+        var temp = document.getElementsByName("FoodState");
+        for (var i = 0; i < temp.length; i++) {
+            if (temp[i].checked) {
+                return true;
+            }
+        }
+        return false;
+    }
+</script>
+
+
+
+<script>
+        function abc() {
+        if (check() == false)
+            return;      
+        var formData = new FormData(document.getElementById("form1"));
+        var account =@ViewData["Account"];
+        formData.append("Account", account);
+        alert(account);
+        $.ajax({
+            type: "POST",//FromMethod
+            url: "/Shop/PresentFood",//"/Controller/Action"，记住这里前面一定记得要有"/".
+            data: formData,//参数，无参数填空
+            async: false,
+            dataType: "text",
+            processData: false,
+            contentType: false,           
+            success: function (msg) {
+                if (msg == "1")
+                    alert("创建成功");
+                else
+                    alert("创建失败");
+            },
+            error: function (er) {
+                alert("创建失败");
+            },
+        });
+    }
+ </script>
+
+
+
+    <script>
+        function imgPreview(fileDom) {
+        //判断是否支持FileReader
+        if (window.FileReader) {
+            var reader = new FileReader();
+        } else {
+            alert("您的设备不支持图片预览功能，如需该功能请升级您的设备！");
+        }
+
+        //获取文件
+        var file = fileDom.files[0];
+        var imageType = /^image\//;
+        //是否是图片
+        if (!imageType.test(file.type)) {
+            alert("请选择图片！");
+        return;
+        }
+        //读取完成
+        reader.onload = function (e) {
+            //获取图片dom
+            var img = document.getElementById("preview");
+            //图片路径设置为读取的图片
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+</script>
+

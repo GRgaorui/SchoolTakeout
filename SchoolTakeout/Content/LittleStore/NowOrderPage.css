@@ -1,0 +1,138 @@
+﻿#NowOrder {
+    display: block;
+    background-color: #ededed;
+}
+
+#Top {
+    height: 50px;
+    background: #FFCA28;
+}
+
+#Esc {
+    color: #FFF8E1;
+    font-size: 30px;
+    margin: 5px 0 0 10px;
+}
+
+#EscText {
+    color: #FFF8E1;
+    font-size: 15px;
+    margin: -15px 0 0 50px;
+}
+
+#State {
+    height: 150px;
+    background-color: #FFCA28;
+    margin-top: 50px;
+    padding-top: 10px;
+}
+
+#ShopPic {
+    background-image: url("Theme/65391606_p0.jpg");
+    background-size: cover;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto;
+}
+
+#OrderState {
+    color: #FFF8E1;
+    font-size: 15px;
+    letter-spacing: 5px;
+    width: 110px;
+    margin: 0 auto;
+}
+
+#ThisOrderImfo {
+    background-color: #ffffff;
+    margin: 5px 5px 0 5px;
+    padding: 0 15px;
+}
+
+#ShopName {
+    padding: 8px 0;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+#ThisOrderFoodEvent {
+    border-top: medium solid #ededed;
+    border-bottom: medium solid #ededed;
+}
+
+#ThisOrderFoodul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.ThisOrderFood {
+    border-top: thin solid #ededed;
+    margin: 3px 0;
+    font-size: 14px;
+}
+
+.ThisOrderFoodNum {
+    margin: -19px 0 0 50%;
+    font-weight: 600;
+}
+
+.ThisOrderFoodNumText {
+    margin: -20px 0 0 10px;
+}
+
+.ThisOrderFoodPrice {
+    font-weight: 600;
+    margin: -19px 0 0 80%;
+}
+
+.ThisOrderFoodPriceText {
+    margin: -20px 0 0 10px;
+}
+
+#PhoneMoney {
+    padding: 12px 0;
+}
+
+#ShopPhone {
+    color: #FFCA28;
+}
+
+#PayMoney {
+    font-weight: 600;
+    font-size: 18px;
+    margin: -24px 0 0 77%;
+}
+
+#PayMoneyText {
+    margin: -25px 0 0 15px;
+}
+
+#PackingImfo {
+    background-color: #ffffff;
+    margin: 5px 5px 0 5px;
+    padding: 0 15px;
+}
+
+.Column {
+    padding: 10px 0;
+    border-top: #ededed thin solid;
+}
+
+.Hint {
+    width: 56px;
+}
+
+.PackingImfoText {
+    margin: -20px 0 0 70px;
+}
+
+#MakeSurePay {
+    background-color: #00E676;
+    height: 40px;
+    font-size: 20px;
+    letter-spacing: 8px;
+    color: #E8F5E9;
+    text-align: center;
+    padding-top: 5px; 
+}

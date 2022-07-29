@@ -1,0 +1,53 @@
+﻿.Shop
+{
+    text-align:center;
+}
+
+.Shop>div,.Shop>a>div
+{
+    max-width:90%;
+    padding-top:5px;
+    padding-bottom:5px;
+    font-size:20px;
+    border-bottom:2px solid #dcdcd5;
+    margin-right:5%;
+    margin-left:5%;
+    transition-duration:1s;
+    transition-property:background-color;
+    text-decoration-style:none;
+}
+.Shop>div:active,.Shop>a>div:active
+{
+    background-color:#dcdcd5;
+    text-decoration-style:none;
+}
+.Shop>a,.Shop>a:link,.Shop>a:visited,.Shop>a:hover,.Shop>a:active{
+    text-decoration-style:none;
+}
+#OCount{
+    font-size:80px;
+}
+#History{
+    border-top:2px solid #dcdcdc;
+}
+#shopToggle{
+    display:block;
+    width:60%;
+    margin:auto;
+    border:none;
+    font-weight:bold;
+    background-color:#f0f7c9
+   
+}
+.Otable,.Otable>tr{
+    width:100%;
+}
+#ShopState{
+    border:none;
+    text-align:center   ;
+    font-size:24px;
+    height:30px;
+    color:#ffffff;
+    /*background-color:*/
+}
+

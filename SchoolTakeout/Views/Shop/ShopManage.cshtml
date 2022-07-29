@@ -1,0 +1,207 @@
+﻿
+@{
+    ViewBag.Title = "店铺";
+}
+@using SchoolTakeout.Tool;
+@using System.Data.SqlClient;
+<table   class="table table-striped table-hover table-bordered">
+    <caption><h2 style="float:left;">店铺管理</h2></caption>
+    <thead>
+        <tr>
+            <td>
+                <p>店铺名称</p>
+            </td>
+            <td>
+                <p>店铺账号</p>
+            </td>
+            <td>
+                <p>联系电话</p>
+            </td>          
+            <td>
+                <p>店铺状态</p>
+            </td>
+            <td>
+                <p>微信下单</p>
+            </td>
+            <td>
+                <p>商品管理</p>
+            </td>
+            <td>
+                <p>操作</p>
+            </td>
+        </tr>
+    </thead>
+    <tbody id="tbody1">
+
+    </tbody>
+</table>
+
+
+ 
+@{
+    string[] name = new string[50];
+    string[] account= new string[50];
+    string[] shopstate = new string[50];
+    string[] wechatstate = new string[50];
+    SqlDB A = new SqlDB();
+    SqlDataReader read = A.GetShop();
+    int i = 0;
+    int count = 0;
+    while(read.Read())
+    {
+        account[i] = read[0].ToString();
+        name[i] = read[1].ToString();
+        shopstate[i] = read[2].ToString();
+        wechatstate[i] = read[3].ToString();
+        i++;
+        count++;
+    }
+    A.CloseConnection();
+    string NameText;
+    int j = 1;
+    NameText = name[0];
+    while (true)
+    {
+        if (name[j] != null)
+        {
+            NameText = NameText + "+-+" + name[j];
+            j++;
+        }
+        else { break; }
+    }
+
+    string accountText;
+    int p = 1;
+    accountText = account[0];
+    while (true)
+    {
+        if (account[p] != null)
+        {
+            accountText = accountText + "+-+" + account[p];
+            p++;
+        }
+        else { break; }
+    }
+
+
+    string shopstateText;
+    int n = 1;
+    shopstateText = shopstate[0];
+    while (true)
+    {
+        if (shopstate[n] != null)
+        {
+            shopstateText = shopstateText + "+-+" + shopstate[n];
+            n++;
+        }
+        else { break; }
+    }
+
+    string wechatstateText;
+    int m = 1;
+    wechatstateText = wechatstate[0];
+    while (true)
+    {
+        if (wechatstate[m] != null)
+        {
+            wechatstateText = wechatstateText + "+-+" + wechatstate[m];
+            m++;
+        }
+        else { break; }
+    }
+}
+    <script>
+        window.onload = function () {
+            var count =@count;
+            var i = 0;
+            var name = "@NameText";
+            var account = "@accountText";
+            var shopstate = "@shopstateText";
+            var wechatstate = "@wechatstateText";
+            var n = name.split("+-+");
+            var m = account.split("+-+");
+            var p = shopstate.split("+-+");
+            var k = wechatstate.split("+-+");
+            while (i < count) {
+                var text = "<tr><td><p>" + n[i] + "</p></td ><td><p id='account" + i + "'>" + m[i] + "</p></td><td><p>" + m[i] + "</p></td><td><select class='form-control' id='shopsel" + i + "' name='" + i + "' onchange='ShopStateChange(this.name)'><option>开</option><option>关</option></select></td><td><select class='form-control' id='wechatsel" + i + "' name='" + i +"' onchange='WechatStateChange(this.name)'><option>开</option><option>关</option></select></td><td><a href='/Shop/FoodManage?account="+m[i]+"'>商品显示</a></td><td><p>操作</p></td> </tr >";
+                $("#tbody1").append(text);
+                var shopsel = "shopsel" + i;
+                if (p[i] == "0")
+                {
+                    document.getElementById(shopsel).options[1].selected = true;
+                }
+                else
+                {
+                    document.getElementById(shopsel).options[0].selected = true;
+                }
+                var wechatsel = "wechatsel" + i;
+                if (k[i] == "0") {
+                    document.getElementById(wechatsel).options[1].selected = true;
+                }
+                else {
+                    document.getElementById(wechatsel).options[0].selected = true;
+                }
+                i++;
+            }
+        }
+    </script>
+
+<script>
+    function ShopStateChange(x)
+    {
+        var accounttext = "account" + x;
+        var account = document.getElementById(accounttext).innerText;
+        var seltext = "shopsel" + x;
+        var v = document.getElementById(seltext).value;
+        var val = 0;
+        if (v == "关") {
+            val = 0;
+        }
+        else if (v == "开") {
+            val = 1;
+        }
+        $.ajax({
+            type: "post",
+            url: "/Shop/ChangeShopState",
+            data: { "State": val, "Account": account },
+            dataType: 'JSON',
+            async: false,
+            success: function (result) {
+                 if (result == 0) {
+                    alert("商店状态修改失败");
+                }
+            }
+        });
+    }
+
+    function WechatStateChange(x) {
+        alert("456");
+        var accounttext = "account" + x;
+        var account = document.getElementById(accounttext).innerText;
+        var wechattext = "wechatsel" + x;
+        var v = document.getElementById(wechattext).value;
+        var val = 0;
+        if (v == "关") {
+            val = 0;
+        }
+        else if (v == "开") {
+            val = 1;
+        }
+        $.ajax({
+            type: "post",
+            url: "/Shop/ChangeWechatState",
+            data: { "State": val, "Account": account },
+            dataType: 'JSON',
+            async: false,
+            success: function (result) {
+                //alert(result);
+                if (result == 1) {
+                    alert("微信支付修改成功");
+                }
+                else if (result == 0) {
+                    alert("微信支付修改失败");
+                }
+            }
+        });
+    }
+</script>

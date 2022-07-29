@@ -1,0 +1,175 @@
+﻿@{
+    ViewBag.Title = "BackGroundProcessingNotDistribution";
+}
+@using SchoolTakeout.Tool;
+@using System.Data.SqlClient;
+@using System.Runtime.Serialization.Json;
+@using System.Runtime.Serialization;
+@using System.Text;
+
+<!DOCTYPE html>
+<link href="~/Content/BackGroundProcessingNotDistribution.css" rel="stylesheet" />
+<h2>未被抢单的订单信息</h2>
+<div id="abcd">
+
+</div>
+
+<div id="light" class="white_content"><!--弹出div内部的内容-->
+    <div><b style="float:left;width:100px;">配送员账号</b><b style="width:120px;">配送员姓名</b></div>
+    <div id="Pop"></div>
+</div>
+<div id="fade" class="black_overlay"><!--设置背景-->
+
+</div>
+
+<script>
+    function OpenDetail(x) {
+        var tbody = "tbody" + x.id;
+        var a = document.getElementById(tbody).style.display;
+        if (a == "none") {
+            document.getElementById(tbody).style.display = "block";
+        }
+        else
+            document.getElementById(tbody).style.display = "none";
+    }
+</script>
+
+<script>
+    function openWindow() {
+        document.getElementById('light').style.display = 'block';
+        document.getElementById('fade').style.display = 'block';
+    }
+    function closeWindow() {
+        document.getElementById('light').style.display = 'none';
+        document.getElementById('fade').style.display = 'none';
+    }
+</script>
+
+<script>
+    window.onload = function () {
+        setInterval("Refresh()", 6000);
+    }
+    function Refresh() {
+        $.ajax({
+            type: "post",
+            url: "/BackGround/NotDistributionOrder",
+            data: {},
+            dataType: 'TEXT',
+            async: false,
+            success: function (result) {
+                var text = result;
+                alert(text);
+                var arrEntities = { 'lt': '<', 'gt': '>', 'nbsp': ' ', 'amp': '&', 'quot': '"' };
+                var t = text.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) { return arrEntities[t]; });
+                var obj = eval("(" + t + ")");
+                var i = 0;
+                $("#abcd").empty();
+                while (i < obj.length) {
+                    var a = obj[i][3].split("WT");
+                    var b = obj[i][4].replace(/GR/g, '<br/>');
+                    var c = obj[i][8].split("WC");
+                    var date = new Date(parseInt(obj[i][12])).toLocaleString();
+                    var txt = "<table class='table table- striped table-hover'>"
+                        + "<thead>"
+                        + "<tr>"
+                        + "<td width='800px'><div style='color:red' id='" + i + "' onclick='OpenDetail(this)'>名称:" + obj[i][0] + "</div></td>"
+                        + "<td><input type='button' value='配送员' onclick='Delivery(" + obj[i][0] + "," + obj[i][1] + "," + obj[i][2] + ")' /></td>"
+                        + "</tr>"
+                        + "</thead>"
+                        + "<tbody style='display:none;' id='tbody" + i + "'>"
+                        + "<tr>"
+                        + "<td><p>OrderID:" + obj[i][0] + "</p></td>"
+                        + "</tr>"
+                        + "<tr>"
+                        + "<td><p>UserAccount:" + obj[i][1] + "</p></td>"
+                        + "</tr>"
+                        + "<tr>"
+                        + "<td><p>ShopAccount:" + obj[i][2] + "</p></td>"
+                        + "</tr>"
+                        + "<tr>"
+                        + "<td><p>ShopInfo:" + a + "</p></td>"
+                        + "</tr>"
+                        + "<tr>"
+                        + "<td><p>FoodInfo:" + b + "</p></td>"
+                        + "</tr>"
+                        + "<tr>"
+                        + "<td><p>Price:" + obj[i][5] + "</p></td>"
+                        + "</tr>"
+                        + "<tr>"
+                        + "<td><p>DistributionPrice:" + obj[i][6] + "</p></td>"
+                        + "</tr>"
+                        + "<tr>"
+                        + "<td><p>PackingPrice:" + obj[i][7] + "</p></td>"
+                        + "</tr>"
+                        + "<tr>"
+                        + "<td><p>ClientInfo:" + c + "</p></td>"
+                        + "</tr>"
+                        + "<tr>"
+                        + "<td><p>DistributionPerson:" + obj[i][9] + "</p></td>"
+                        + "</tr>"
+                        + "<tr>"
+                        + "<td><p>RealTimeState:" + obj[i][10] + "</p></td>"
+                        + "</tr>"
+                        + "<tr>"
+                        + "<td><p>EndState:" + obj[i][11] + "</p></td>"
+                        + "</tr>"
+                        + "<tr>"
+                        + "<td><p>Time:" + date + "</p></td>"
+                        + "</tr>"
+                        + "</tbody>"
+                        + "</table >";
+                    $("#abcd").append(txt);
+                    i++;
+                }
+            }
+        });
+    }
+    function Delivery(OrderID,UserAccount,ShopAccount)
+    {
+        openWindow();
+        $.ajax({
+            type: "post",
+            url: "/BackGround/Delivery",
+            data: {},
+            dataType: 'TEXT',
+            async: false,
+            success: function (result)
+            {
+                var text = result;
+                alert(text);
+                var arrEntities = { 'lt': '<', 'gt': '>', 'nbsp': ' ', 'amp': '&', 'quot': '"' };
+                var t = text.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) { return arrEntities[t]; });
+                var obj = eval("(" + t + ")");
+                alert(obj.length);
+                var i = 0;
+                $("#Pop").empty();
+                while (i < obj.length) {
+                    var txt = "<div style = 'float:left;width:220px;'><b style='float: left; width: 100px;'>" + obj[i][0] + "</b><b style='width: 120px;'>" + obj[i][1] + "</b></div><input type='button' value='确定' onClick='CheckDelivery(" + OrderID + "," + UserAccount + "," + ShopAccount + "," + obj[i][0] +")' /><br>";
+                    $("#Pop").append(txt);
+                    i++;
+                }
+            }
+        });
+
+    }
+    function CheckDelivery(OrderID, UserAccount, ShopAccount, DeliveryAccount)
+    {
+        closeWindow();
+        alert(OrderID);
+        alert(UserAccount);
+        alert(ShopAccount);
+        alert(DeliveryAccount);
+        $.ajax({
+            type: "post",
+            url: "/Delivery/Rob",
+            data: { "OrderID": OrderID, "UserAccount": UserAccount, "ShopAccount": ShopAccount, "DeliveryAccount":DeliveryAccount},
+            dataType: 'TEXT',
+            async: false,
+            success: function (result) {
+                if (result != 0) {
+                    alert("分配成功");
+                }
+            }
+        });
+    }
+</script>

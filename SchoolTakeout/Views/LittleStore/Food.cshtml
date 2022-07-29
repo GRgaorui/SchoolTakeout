@@ -1,0 +1,424 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutUserPort.cshtml";
+}
+@using SchoolTakeout.Tool;
+@using System.Data.SqlClient;
+@using System.Runtime.Serialization.Json;
+@using System.Runtime.Serialization;
+@using System.Text;
+@{
+    SqlDB A = new SqlDB();
+    int qweeri = ViewData.Count;
+    string szJson = "";
+
+    try
+    {
+        if (ViewData["ShopID"].ToString() == null) { }
+        SqlDataReader read = A.GetFoodType(@ViewData["ShopID"].ToString());
+
+        List<List<string>> show = new List<List<string>>();
+        while (read.Read())
+        {
+            List<string> arry = new List<string>();
+            for (int i = 0; i < read.FieldCount; i++)
+            {
+                arry.Add(read[i].ToString());
+            }
+            show.Add(arry);
+        }
+        A.CloseConnection();
+        DataContractJsonSerializer json = new DataContractJsonSerializer(show.GetType());
+        using (MemoryStream stream = new MemoryStream()) //序列化
+        {
+            json.WriteObject(stream, show);
+            szJson = Encoding.UTF8.GetString(stream.ToArray());
+
+        }
+    }
+    catch
+    {
+        Response.Redirect("/LittleStore/Shop", true);
+    }
+}
+
+<script>
+    var Types;
+    var PreType;
+    var NowType;
+
+    //指定位置插入小数点
+    function insert_flg(str, flg, sn) {
+        var newstr = "";
+        var tmp = str.toString().substring(0, sn);
+        newstr = tmp + flg + str.toString().substring(sn, str.length);
+        return newstr;
+    }
+
+    //改变食物分类点击和未点击的样式
+    function TouchType(Type) {
+        NowType = Type;
+        if (NowType == PreType) {
+            PreType = NowType;
+        }
+        else {
+            PreType.classList.remove("TypeTouch");
+            PreType.classList.add("TypeUnTouch");
+            NowType.classList.remove("TypeUnTouch");
+            NowType.classList.add("TypeTouch");
+            PreType = NowType;
+        }
+        $.ajax({
+            type: "post",
+            url: "/LittleStore/GetTypeFood",
+            data: { "Type": $(Type).text(),"ShopAccount":@ViewData["ShopID"]},
+            dataType: 'TEXT',
+            async: false,
+            success: function (result) {
+                $("#FoodList").empty();
+                CreatFoodList(result);
+            }
+        });
+    }
+
+    //动态生成食物
+    function CreatFoodList(result) {
+        var text = result;
+        var arrEntities = { 'lt': '<', 'gt': '>', 'nbsp': ' ', 'amp': '&', 'quot': '"' };
+        var t=text.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) { return arrEntities[t]; });
+        var obj = eval("(" + t + ")");
+        var i = 0;
+        while (i < obj.length) {
+            if (obj[i][4] == "1") {
+                Types = "<div class='FoodColumn' id= 'FoodColumn" + i + "'>"
+                    + "<div class='FoodImg' id= 'FoodImg" + i + "'><img src='" + obj[i][7] +"' class='FoodImg'></div>"
+                    + "<div class='FoodImfo' id='FoodImfo" + i + "'>"
+                    + "<div class='FoodName' id='FoodName" + i + "'>"
+                    + obj[i][1]
+                    + "</div>"
+                    + "<div class='FoodMes' id='FoodMes" + i + "'>"
+                    + obj[i][5]
+                    + "</div>"
+                    + "<div class='PackingPrice' id='PackingPrice" + i + "'>"
+                    + "打包费¥"+obj[i][3]
+                    + "</div>"
+                    + "<div class='FoodPrice' id='FoodPrice" + i + "'>"
+                    + "<div>¥</div>"
+                    + "<div class='PriceNum' id='PriceNum" + i + "'>"
+                    + obj[i][2]
+                    + "</div>"
+                    + "</div>"
+                    + "<div class='AddFood glyphicon glyphicon-plus-sign "
+                    + obj[i][0]
+                    + "' id='AddFood" + i + "' onclick='AddThisFood(this)' data-thisfoodnum='0' data-sameclass='"
+                    + obj[i][0]
+                    +"' data-thisfoodstate='0'aria-hidden='true'>"
+                    + "</div>"
+                    + "</div>"
+                    + "</div>"
+                $("#FoodList").append(Types);
+            }
+            i++;
+        }
+    }
+
+    //点击添加该食品
+    function AddThisFood(Food) {
+        var FoodNum = parseInt(Food.dataset.thisfoodnum);
+        FoodNum++;
+        Food.dataset.thisfoodnum = FoodNum.toString();
+        if (parseInt(Food.dataset.thisfoodstate) == 1) {
+            var ThisFoodli = $("li." + Food.dataset.sameclass);
+            ThisFoodli.find(".OrderFoodNum").text(Food.dataset.thisfoodnum);
+            ThisFoodli.find(".OrderFoodPriceNum").text(insert_flg((Food.dataset.thisfoodnum * $(Food).siblings(".FoodPrice").find(".PriceNum").text().replace(".", "")).toString(), ".", (Food.dataset.thisfoodnum * $(Food).siblings(".FoodPrice").find(".PriceNum").text().replace(".", "")).toString().length - 2));
+            CountPrice();
+            CountNum();
+        }
+        else {
+            $("#DistributionPrice").text("配送费:¥"+"@ViewData["DistributionPrice"]");
+            $("#DistributionPrice").css("display", "block");
+            var foodli = "<li class='OrderFood "
+                + Food.dataset.sameclass
+                + "' sameid='"
+                + Food.dataset.sameclass
+                + "' id='OrderFood'>"
+                + "<div class='ThisFoodName'>"
+                + $(Food).siblings(".FoodName").text()
+                + "</div>"
+                + "<div class='OrderFoodPrice' id='OrderFoodPrice'>"
+                + "<div>¥</div>"
+                + "<div class='OrderFoodPriceNum' foodprice='"
+                + $(Food).siblings(".FoodPrice").find(".PriceNum").text()
+                + "' id='OrderFoodPriceNum'>"
+                + insert_flg($(Food).siblings(".FoodPrice").find(".PriceNum").text().replace(".", "").toString(), ".", $(Food).siblings(".FoodPrice").find(".PriceNum").text().replace(".", "").toString().length - 2)
+                + "</div>"
+                + "<div class='OrderFoodNum' id='OrderFoodNum'>1</div>"
+                + "<div class='OrderFoodMinus glyphicon glyphicon-minus-sign' data-sameclass='"
+                + Food.dataset.sameclass
+                + "'onclick = 'MinusFoodNum(this)' id= 'OrderFoodMinus' ></div >"
+                + "<div class='OrderFoodPlus glyphicon glyphicon-plus-sign' data-sameclass='"
+                + Food.dataset.sameclass
+                + "'onclick = 'PlusFoodNum(this)' id= 'NowFoodPlus' ></div >"
+                + "</div>"
+                + "</li>";
+            $("#OrderFoodul").append(foodli);
+            $("#ShopTrolleyPic").css("color", "#FFCA28");
+            $("#Pay").css("background-color", "#00E676");
+            CountNum();
+            CountPrice();
+            Food.dataset.thisfoodstate = "1";
+        }
+    }
+
+    //是否展开购物车
+    function ClickShopTrolley(ShopTrolleyIcon) {
+        var FoodsNum = parseInt(ShopTrolleyIcon.dataset.foodsnum);
+        if (FoodsNum == 0) { }
+        else {
+            if (ShopTrolleyIcon.dataset.isclick == "false") {
+                $("#OrderFoodList").animate({ height:'show'});
+                ShopTrolleyIcon.dataset.isclick = "true";
+            }
+            else if (ShopTrolleyIcon.dataset.isclick == "true") {
+                $("#OrderFoodList").animate({ height:'hide'});
+                ShopTrolleyIcon.dataset.isclick = "false";
+            }
+        }
+    }
+
+    //计算购物车里商品的总数
+    function CountNum() {
+        var TotalNum = 0;
+        $("li.OrderFood").each(function () {
+            TotalNum = TotalNum + parseInt($(this).find(".OrderFoodNum").text().replace(".", ""));
+        })
+        document.getElementById("ShopTrolleyPic").dataset.foodsnum = TotalNum.toString();
+    }
+
+    //计算购物车里商品的总价
+    function CountPrice() {
+        var TotalPrice = 0;
+        $("li.OrderFood").each(function () {
+            TotalPrice = TotalPrice + parseInt($(this).find(".OrderFoodPriceNum").text().replace(".", ""));
+        })
+        if (TotalPrice == 0) {
+            $("#TotalPriceNum").text("0.00");
+        }
+        else {
+            $("#TotalPriceNum").text(insert_flg(TotalPrice.toString(), ".", TotalPrice.toString().length - 2));
+        }
+    }
+
+    //点击购物车里的-按钮
+    function MinusFoodNum(NumMinus) {
+        var FoodNumText = $(NumMinus).siblings(".OrderFoodNum");
+        var FoodPriceText = $(NumMinus).siblings(".OrderFoodPriceNum");
+        var FoodNum = FoodNumText.text();
+        FoodNum--;
+        $(FoodNumText).text(FoodNum);
+        $("." + NumMinus.dataset.sameclass).attr("data-thisfoodnum", FoodNum.toString());
+        var FoodPrice = FoodNum * FoodPriceText.attr("foodprice").replace(".", "");
+        $(FoodPriceText).text(insert_flg(FoodPrice.toString(), ".", FoodPrice.toString().length - 2));
+        if (FoodNum == 0) {
+            $("." + NumMinus.dataset.sameclass).attr("data-thisfoodstate", "0");
+            $(NumMinus).parent().parent().remove();
+            $("#DistributionPrice").text("");
+        }
+        CountPrice();
+        CountNum();
+        var ShopTrolleyIcon = document.getElementById("ShopTrolleyPic");
+        var FoodsNum = ShopTrolleyPic.dataset.foodsnum;
+        if (FoodsNum == 0) {
+            $("#OrderFoodList").css("display", "none");
+            ShopTrolleyIcon.dataset.isclick = "false";
+            $("#ShopTrolleyPic").css("color", "#d0d0d0");
+            $("#Pay").css("background-color", "#d0d0d0");
+        }
+    }
+
+    //点击购物车里的+按钮
+    function PlusFoodNum(NumPlus) {
+        var FoodNumText = $(NumPlus).siblings(".OrderFoodNum");
+        var FoodPriceText = $(NumPlus).siblings(".OrderFoodPriceNum");
+        var FoodNum = FoodNumText.text();
+        FoodNum++;
+        $(FoodNumText).text(FoodNum);
+        $("." + NumPlus.dataset.sameclass).attr("data-thisfoodnum", FoodNum.toString());
+        var FoodPrice = FoodNum * FoodPriceText.attr("foodprice").replace(".", "");
+        $(FoodPriceText).text(insert_flg(FoodPrice.toString(), ".", FoodPrice.toString().length - 2));
+        CountPrice();
+        CountNum()
+    }
+
+    //点击去支付进入订单确认
+    function ClickPay(PayIcon) {
+        var Pay = PayIcon;
+        if ($(Pay).siblings("#ShopTrolleyPic").attr("data-foodsnum") == "0") { }
+        else {
+            var ShopAccount = @ViewData["ShopID"].ToString();
+            var ChildLi = document.getElementById("OrderFoodul").childNodes;
+            var FoodIDList = $(ChildLi[0]).attr("sameid");
+            var NumList = $(ChildLi[0]).find(".OrderFoodNum").text();
+            var NameList = $(ChildLi[0]).find(".ThisFoodName").text();
+            var PriceList = $(ChildLi[0]).find(".OrderFoodPriceNum").text();
+            for (var i = 1; i < ChildLi.length; i++) {
+                FoodIDList = FoodIDList + "WT" + $(ChildLi[i]).attr("sameid") ;
+                NumList = NumList + "WT" + $(ChildLi[i]).find(".OrderFoodNum").text();
+                NameList = NameList + "WT" + $(ChildLi[i]).find(".ThisFoodName").text();
+                PriceList = PriceList + "WT" + $(ChildLi[i]).find(".OrderFoodPriceNum").text();
+            }
+            $.ajax({
+                type: "post",
+                url: "/LittleStore/GetOrderFoodList",
+                data: { "ShopAccount": ShopAccount, "FoodIDList": FoodIDList, "NumList": NumList, "UesrAccount": @ViewData["UserAccount"],"DistributionPrice":@ViewData["DistributionPrice"]},
+                dataType: 'TEXT',
+                async: false,
+                success: function (result) {
+                    var n = result.split("WT");
+                    window.location.href = "/LittleStore/NowOrder?ShopID=@ViewData["ShopID"]&ShopName=@ViewData["ShopName"]&ShopAddress=@ViewData["ShopAddress"]&UserAccount=@ViewData["UserAccount"]&UserName=@ViewData["UserName"]&UserPhone=@ViewData["UserPhone"]&UserAddress=@ViewData["UserAddress"].ToString()&FoodMoney=" + n[0] + "&PackingMoney=" + n[1] + "&DistributionPrice=@ViewData["DistributionPrice"]&TotalPrice=" + n[2] + "&OrderNumber=" + n[3] + "&FoodList=" + FoodIDList + "&NumList=" + NumList + "&NameList=" + NameList + "&PriceList=" + PriceList;
+                }
+            });
+        }
+    }
+
+    //页面加载后执行
+    window.onload = function () {
+        //定义页面长度
+        var SeenHeight = document.documentElement.clientHeight;
+        $("#TypeSlider").css("height", SeenHeight);
+        $("#FoodList").css("height", SeenHeight);
+        $("#NowOrder").css("min-height", SeenHeight);
+        //加载网页后显示购物车一栏的状态
+        var ShopTrolleyPic = document.getElementById("ShopTrolleyPic");
+        $(ShopTrolleyPic).attr("class","glyphicon glyphicon-shopping-cart");
+        if (ShopTrolleyPic.dataset.foodsnum == "0") {
+            $("#ShopTrolleyPic").css("color", "#d0d0d0");
+            $("#Pay").css("background-color", "#d0d0d0");
+        }
+        else {
+            $("#ShopTrolleyPic").css("color", "#FFCA28");
+            $("#Pay").css("background-color", "#00C853");
+        }
+        //读取分类的数据
+        var text = "@szJson";
+        var arrEntities = { 'lt': '<', 'gt': '>', 'nbsp': ' ', 'amp': '&', 'quot': '"' };
+        var t = text.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) { return arrEntities[t]; });
+        var obj = eval("(" + t + ")");
+        //去掉相同的分类
+        var tmp = new Array();
+        tmp = unique(obj);
+        function unique(arr) {
+            // 遍历arr，把元素分别放入tmp数组(不存在才放)
+            for (var i in arr) {
+
+                //该元素在tmp内部不存在才允许追加
+                if (tmp.indexOf(arr[i][0]) == -1) {
+                    tmp.push(arr[i][0]);
+                }
+            }
+            return tmp;
+        }
+        //动态生成分类
+        var i = 0;
+        while (i < tmp.length) {
+            if (i == 0) {
+                Types = "<li class='TypeTouch' onclick='TouchType(this)' id='" + tmp[i] + "'>" + tmp[i] + "</li>";
+                $("#Typeul").append(Types);
+                PreType = document.getElementById(tmp[i]);
+                $.ajax({
+                type: "post",
+                url: "/LittleStore/GetTypeFood",
+                data: { "Type": tmp[i],"ShopAccount":@ViewData["ShopID"]},
+                dataType: 'TEXT',
+                async: false,
+                success: function (result) {
+                            $("#FoodList").empty();
+                            CreatFoodList(result);
+                        }
+                });
+            }
+            else {
+                Types = "<li class='TypeUnTouch' onclick='TouchType(this)' id='" + tmp[i] + "'>" + tmp[i] + "</li>";
+                $("#Typeul").append(Types);
+            }
+            i++;
+        }
+    }
+</script>
+
+<div id="Food">
+    <div id="TypeSlider">
+        <ul id="Typeul"></ul>
+    </div>
+    <div id="FoodList"></div>
+    <div id="ShopTrolley" class="navbar-fixed-bottom">
+        <div id="ShopTrolleyPic" data-isclick="false" data-foodsnum="0" onclick="ClickShopTrolley(this)"></div>
+        <div id="TotalPrice">
+            <div>¥</div>
+            <div id="TotalPriceNum" >0.00</div>
+        </div>
+        <div style="height:20px;"><div id="DistributionPrice"></div></div>
+        <div id="Pay" onclick="ClickPay(this)">去支付</div>
+        <div id="OrderFoodList">
+            <ul id="OrderFoodul"></ul>
+        </div>
+    </div>
+</div>
+
+<div id="NowOrder">
+    @*<div id="Top" class="navbar-fixed-top">
+        <div id="Esc" class="glyphicon glyphicon-list-alt">
+        </div>
+        <div id="EscText">
+            我的订单
+        </div> 
+    </div>
+    <div id="State">
+        <div id="ShopPic"></div>
+        <div id="OrderState">
+            正在配送···
+        </div>
+    </div>
+    <div id="ThisOrderImfo">
+        <div id="ShopName">@ViewData["ShopName"].ToString()</div>
+        <div id="ThisOrderFoodEvent">
+            <ul id="ThisOrderFoodul">
+                <li class="ThisOrderFood" id="ThisOrderFood">
+                    <div class="ThisOrderFoodName" id="ThisOrderFoodName">XXX</div>
+                    <div class="ThisOrderFoodNum" id="ThisOrderFoodNum">
+                        <div>X</div>
+                        <div class="ThisOrderFoodNumText" id="ThisOrderFoodNumText">1</div>
+                    </div>
+                    <div class="ThisOrderFoodPrice" id="ThisOrderFoodPrice">
+                        <div>¥</div>
+                        <div class="ThisOrderFoodPriceText" id="ThisOrderFoodPriceText">1.00</div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div id="PhoneMoney">
+            <div id="ShopPhone">@ViewData["ShopID"].ToString()</div>
+            <div id="PayMoney">
+                <div>¥</div>
+                <div id="PayMoneyText"></div>
+            </div>
+        </div>
+    </div>
+    <div id="PackingImfo">
+        <div class="Column" id="OrderNum">
+            <div class="Hint" id="OrderNumHint">订单号</div>
+            <div class="PackingImfoText" id="OrderNumText">XXXXXXXXXXXXXXXXXXXX</div>
+        </div>
+        <div class="Column" id="OrderUserName">
+            <div class="Hint">我的称呼</div>
+            <div class="PackingImfoText" id="OrderUserNameText">@ViewData["UserName"].ToString()</div>
+        </div>
+        <div class="Column" id="OrderUserPhoneNum">
+            <div class="Hint">我的电话</div>
+            <div class="PackingImfoText" id="OrderUserPhoneNumText">@ViewData["UserPhone"].ToString()</div>
+        </div>
+        <div class="Column" id="OrderAcceptAddress">
+            <div class="Hint">收获地址</div>
+            <div class="PackingImfoText" id="OrderAcceptAddressText">@ViewData["UserAddress"].ToString()</div>
+        </div>
+    </div>*@ 
+</div>

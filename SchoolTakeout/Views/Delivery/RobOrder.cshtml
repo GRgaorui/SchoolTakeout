@@ -1,0 +1,112 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+@{
+    Layout = "~/Views/Shared/_DeliveryLayout.cshtml";
+}
+@using System.Data.SqlClient;
+@using SchoolTakeout.Tool;
+@using System.Data.SqlClient;
+@using System.Runtime.Serialization.Json;
+@using System.Runtime.Serialization;
+@using System.Text;
+
+
+@{
+    SqlDB A = new SqlDB();
+    SqlDataReader read = A.GetOrder("ThirdOrder");
+    List<List<string>> show = new List<List<string>>();
+    while (read.Read())
+    {
+        List<string> arry = new List<string>();
+        for (int i = 0; i < read.FieldCount; i++)
+        {
+            arry.Add(read[i].ToString());
+        }
+        show.Add(arry);
+    }
+    A.CloseConnection();
+    DataContractJsonSerializer json = new DataContractJsonSerializer(show.GetType());
+    string szJson = "";
+    using (MemoryStream stream = new MemoryStream()) //序列化
+    {
+        json.WriteObject(stream, show);
+        szJson = Encoding.UTF8.GetString(stream.ToArray());
+    }
+}
+
+<div class="topnav">
+    <p class="logostyle">抢&nbsp;&nbsp;单</p>
+</div>
+
+<div class="row" id="R1"></div>
+<script>
+    function RobOrder(OrderID, UserAccount, ShopAccount) {
+        $.ajax({
+            type: "post",
+            url: "/Delivery/Rob",
+            data: { "OrderID": OrderID, "UserAccount": UserAccount, "ShopAccount": ShopAccount, "DeliveryAccount": DeliveryAccount },
+            dataType: 'JSON',
+            async: false,
+            success: function (result) {
+                if (result == 1) {
+                    alert("抢单成功");
+                    $("#" + OrderID + "").remove();
+                }
+                else if (result == 0) {
+                    alert("抢单失败");
+                }
+            }
+        });
+      
+    
+    }
+
+    function updata() {
+        $.ajax({
+            type: "post",
+            url: "/Delivery/PushOrderToDeliver",
+            data: {},
+            dataType: 'TEXT',
+            async: false,
+            success: function (result) {
+                var Ordernumber = document.getElementsByName("ordernumber");
+                var n = result.split("+-+");
+                var i = 0, j = 0, k = 0;
+                if (Ordernumber.length == 0 && n[n.length - 1]>0)
+                    window.location.reload();
+                for (i = 1; i < n[n.length - 1]; i++) {
+                    for (j = 0; j < Ordernumber.length; j++) {
+                        if (n[i] == Ordernumber[j].id) {
+                            break;
+                        }
+                    }
+                    if (j == Ordernumber.length)
+                    window.location.reload();
+                                     
+                }
+
+            }
+        });
+    }
+
+    window.onload = function () {
+        var text = "@szJson";
+        var arrEntities = { 'lt': '<', 'gt': '>', 'nbsp': ' ', 'amp': '&', 'quot': '"' };
+        var t = text.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) { return arrEntities[t]; });
+        var obj = eval("(" + t + ")");
+        var i = 0;
+        while (i < obj.length) {
+            var storeinfo = obj[i][3].split("WT");
+            var clientinfo = obj[i][4].split("WC");
+            var text = "<div class='col-xl-12' id='div" + i + "'></div>";
+            $('#R1').append(text);
+            text = "#div" + i;
+            alert(obj[i][2]);
+            var t = "<div id='" + obj[i][0] + "' class='page'><div name='ordernumber' class='fontstyle'>订单号:" + obj[i][0] + "</div><div class='fontstyle'><div>商家:" + storeinfo[0] + "</div><div>商家地址:" + storeinfo[1] + "</div><div>商家电话:" + storeinfo[2] + "</div></div><div class='fontstyle'><div>客户姓名:" + clientinfo[0] + "</div><div>客户地址:" + clientinfo[2] + "</div><div>客户电话:" + clientinfo[1] + "</div></div><div class='position'><input class='button' onclick='RobOrder(" + obj[i][0] + "," + obj[i][1] + "," + obj[i][2] + ")' type='button' value='抢  单'/></div></div>";
+            $(text).append(t);
+            i++;
+        }
+        setInterval("updata()", 20000);
+    }
+</script>

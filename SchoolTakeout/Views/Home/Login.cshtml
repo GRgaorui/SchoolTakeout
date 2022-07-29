@@ -1,0 +1,30 @@
+﻿@{
+    Layout = "~/Views/Shared/_BackstageLayout.cshtml";
+}
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js"></script>
+<input type="text" id="account"/>
+<input type="password" id="password1" />
+<input type="button" onclick="abc()" value="7897487" />
+<script>
+    function abc() {
+        var a = document.getElementById("account").value;
+        alert(a);
+        var b = document.getElementById("password1").value;
+
+        var pass = md5(b);
+        alert(pass);
+        $.ajax({
+            type: "post",
+            url: "/Home/LoginAccount",
+            data: {"account":"123"},
+            dataType: 'TEXT',
+            async: false,
+            success: function (result) {
+                alert(result);
+                if (result == "true") {
+                   
+                }
+            }
+        });
+    }
+</script>

@@ -1,0 +1,100 @@
+﻿@{
+    ViewBag.Title = "FullOrder";
+}
+
+<!DOCTYPE html>
+
+<meta name="viewport" content="width=device-width" />
+<h2>商家列表</h2>
+<div id="MerchantInfo"></div>
+<input type="button" value="提交" onclick="Check()" />
+<table class="table table-striped table-hover">
+    <caption><h2 style="float:left;">订单信息</h2></caption>
+    <thead>
+        <tr>
+            <td>OrderID</td>
+            <td>UserAccount</td>
+            <td>ShopAccount</td>
+            <td>ShopInfo</td>
+            <td>FoodInfo</td>
+            <td>Price</td>
+            <td>DistributionPrice</td>
+            <td>PackingPrice</td>
+            <td>ClientInfo</td>
+            <td>DistributionPerson</td>
+            <td>RealtimeState</td>
+            <td>EndState</td>
+            <td>Time</td>
+            <td>TotalPrice</td>
+        </tr>
+    </thead>
+    <tbody id="itbody"></tbody>
+</table>
+<script>
+    window.onload = function FullOrder()
+    {
+        $.ajax({
+            type: "GET",
+            url: "/BackGround/ReferFullMerchant",
+            data: {},
+            dataType: 'TEXT',
+            async: false,
+            success: function (result) {
+                var text = result;
+                alert(text);
+                var arrEntities = { 'lt': '<', 'gt': '>', 'nbsp': ' ', 'amp': '&', 'quot': '"' };
+                var t = text.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) { return arrEntities[t]; });
+                var obj = eval("(" + t + ")");
+                alert(obj.length);
+                var i = 0;
+                $("#MerchantInfo").empty();
+                while (i < obj.length)
+                {
+                    var txt = "<input type='checkbox' name='SelectedMerchant' value='" + obj[i][1] + "'/><span>" + obj[i][1] + "&nbsp" + obj[i][0] + "</span><br>";
+                    $("#MerchantInfo").append(txt);
+                    i++;
+                }
+            }
+        });
+    }
+    function Check()
+    {
+        obj = document.getElementsByName("SelectedMerchant");
+        $("#itbody").empty();
+        var AddUp = 0;
+        for (k in obj)
+        {
+            if (obj[k].checked)
+            {
+                $.ajax({
+                    type: "GET",
+                    url: "/BackGround/ReferCheckedMerchantsOrder",
+                    data: { "Check": obj[k].value },
+                    dataType: 'TEXT',
+                    async: false,
+                    success: function (result)
+                    {
+                        var text = result;
+                        alert(text);
+                        var arrEntities = { 'lt': '<', 'gt': '>', 'nbsp': ' ', 'amp': '&', 'quot': '"' };
+                        var t = text.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) { return arrEntities[t]; });
+                        var obj = eval("(" + t + ")");
+                        alert(obj.length);
+                        var i = 0;
+                        while (i < obj.length)
+                        {
+                            var a = obj[i][3].split("WT");
+                            var b = obj[i][4].replace(/GR/g, '<br/>');
+                            var c = obj[i][8].split("WC");
+                            var d = parseInt(obj[i][5]) + parseInt(obj[i][7]);
+                            var date = new Date(parseInt(obj[i][12])).toLocaleString();
+                            var txt = "<tr><td>" + obj[i][0] + "</td><td>" + obj[i][1] + "</td><td>" + obj[i][2] + "</td><td>" + a + "</td><td>" + b + "</td><td>" + obj[i][5] + "</td><td>" + obj[i][6] + "</td><td>" + obj[i][7] + "</td><td>" + c + "</td><td>" + obj[i][9] + "</td><td>" + obj[i][10] + "</td><td>" + obj[i][11] + "</td><td>" + date + "</td><td>" + d + "</td></tr>";
+                            $("#itbody").append(txt);
+                            i++;
+                        }
+                    }
+                });
+            }
+        }
+    }
+</script>

@@ -1,0 +1,21 @@
+﻿
+@{
+    ViewBag.Title = "Set";
+}
+@{
+    Layout = "~/Views/Shared/_ShopManageLayout.cshtml";
+}
+<input type="button" value="注销" onclick="zhuxiao()"/>
+<script>
+   
+    function zhuxiao() {
+        localStorage.removeItem("Login");
+        localStorage.removeItem("Account");
+        window.location.href = "/ShopManage/Login";
+    }
+</script>
+<script type="text/javascript">
+    window.onload = function () {
+        setInterval("updata()", 5000);
+    }
+</script>

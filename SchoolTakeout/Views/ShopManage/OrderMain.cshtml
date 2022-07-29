@@ -1,0 +1,92 @@
+﻿@{
+    ViewBag.Title = "OrderMain";
+}
+
+@{
+    Layout = "~/Views/Shared/_ShopManageLayout.cshtml";
+}
+@using SchoolTakeout.Tool;
+@using System.Data.SqlClient;
+@using System.Runtime.Serialization.Json;
+@using System.Runtime.Serialization;
+@using System.Text;
+@{
+    SqlDB A = new SqlDB();
+    SqlDataReader read = A.GetShopOrder("SecondOrder", ViewData["Account"].ToString());
+    List<List<string>> show = new List<List<string>>();
+    while (read.Read())
+    {
+        List<string> arry = new List<string>();
+        for (int i = 0; i < read.FieldCount; i++)
+        {
+            arry.Add(read[i].ToString());
+        }
+        show.Add(arry);
+        break;
+    }
+    A.CloseConnection();
+    DataContractJsonSerializer json = new DataContractJsonSerializer(show.GetType());
+    string szJson = "";
+    using (MemoryStream stream = new MemoryStream()) //序列化
+    {
+        json.WriteObject(stream, show);
+        szJson = Encoding.UTF8.GetString(stream.ToArray());
+    }
+}
+<div id="topNav" class="navbar navbar-fixed-top">
+    <div class="container">
+        <div class="navbar">
+            <ul id="orderNav" class="nav nav-tabs">
+                <li class="active1"><a href="/ShopManage/OrderMain?Account=@ViewData["Account"].ToString()">待处理</a></li>
+                <li><a href="/ShopManage/distribution?Account=@ViewData["Account"].ToString()">已接受</a></li>
+                <li> <a href="/ShopManage/Completed?Account=@ViewData["Account"].ToString()">已完成</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div id="OrderFormR" class="Row orderform">
+
+
+</div>
+<script type="text/javascript">
+    window.onload = function () {
+        var text = "@szJson";
+        var arrEntities = { 'lt': '<', 'gt': '>', 'nbsp': ' ', 'amp': '&', 'quot': '"' };
+        var t = text.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) { return arrEntities[t]; });
+        var obj = eval("(" + t + ")");
+        var i = 0;
+        while (i < obj.length) {
+            var a = obj[i][3];
+            a.replace("GR", "<br>");
+            a += "总计：  ¥" + obj[i][4] + "<br>" + "<br>餐盒费：  ¥" + obj[i][5];
+            var b = obj[i][6].split("WC");
+            var date = new Date(parseInt(obj[i][8])).toLocaleString();
+            //AddOrder(i, date, "新", a, b[0], b[1], b[2], obj[i][0], obj[i][1], obj[i][2]);
+            //调用安卓          
+            document.location = "js://webview?OrderID=" + obj[i][0] + "&ShopInfo=" + obj[i][10] + "&FoodInfo=" + obj[0][3] + "&FoodPrice=" + obj[i][4] + "&PackingPrice=" + obj[i][5] + "&ClientInfo=" + obj[i][6] + "&Date=" + date + "&DistrbutionPrice=" + obj[i][9] + "&TotalPrice=" + obj[i][11] + "&Remark=" + obj[i][12];
+            $.ajax({
+                type: "post",
+                url: "/ShopManage/Confirm",
+                data: { "OrderID": obj[i][0], "UserAccount": obj[i][1], "ShopAccount": obj[i][2] },
+                dataType: 'JSON',
+                async: false,
+                success: function (result) {
+                   //if (result == 1) {
+                   //     alert("已推送配送员");
+                   // }
+                   // else if (result == 0) {
+                   //     alert("已推送配送员失败");
+                   // }
+                }
+            });
+            i++;
+        }
+        setInterval("updata()", 5000);
+    }
+
+         function callAndroid(){
+            /*约定的url协议为：js://webview?arg1=111&arg2=222*/
+            document.location = "js://webview?arg1=111&arg2=222";
+    }
+
+</script>

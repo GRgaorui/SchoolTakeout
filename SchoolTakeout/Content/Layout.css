@@ -1,0 +1,142 @@
+﻿
+body{
+    padding-top:44px;
+}
+#MainNav>li>a{
+    color:#76abd8;
+    padding:4px;
+}
+#MainNav>li>a:active{
+    background-color:#b2cfe8;
+}
+#MainNav li,#orderNav li{
+    width:32%;
+    margin-left:0.5%;
+    margin-right:0.5%;
+}
+#MainNav,#orderNav{
+    text-align:center;
+    font-size:20px;
+    padding-right:0px;
+    padding-bottom:6px;
+}
+#topNav
+{
+    margin-bottom:0px;
+    background-color:#ffffff;
+}
+#orderNav>li>a
+{
+    padding:4px;
+}
+#topNav>div>.navbar
+{
+    margin-bottom:0px;
+}
+#BottomNav{
+    margin-top:5px;
+    margin-bottom:0px;
+}
+
+#orderNav>.active1>a{
+    font-weight:bolder;
+    color:#000000;
+}
+#orderNav .active1
+{
+    background-color:#c8eff2;
+    border-width:5px;
+    border-bottom-color:#8eeaff;
+}
+.orderform>div{
+    min-height:80px;
+    background-color:#f6f6f6;
+    margin-top:10px;
+    margin-bottom:5px;
+    padding:0px;
+    text-align:center;
+}
+
+#OrderFormR>div{
+     height:auto;
+}
+.ONum{
+    height:80px;
+    border-right:2px dotted #d3d3d3;
+    font-size:32px;
+    min-width:60px;
+    width:15%;
+}
+.OInfo{
+    font-size:18px;
+    min-width:150px;
+    width:60%;
+}
+.BtnInfo{
+    margin-right:-20px;
+    height:80px;
+    font-size:50px;
+    color:#FFFFFF;
+    min-width:50px;
+    width:25%;
+}
+.btn1{
+    background-color:#75c16f;
+}
+.btn2{
+    background-color:#32b4e5;
+}
+.btn5{
+    background-color:#f2b72b;
+}
+.btn3{
+    background-color:#c7c7c7;
+}
+.btn4{
+    background-color:#fe5e5e;
+}
+#Odetail{
+    font-size:18px;
+    text-align:left;
+    display:none;
+    margin-top:4px;
+    border-top:2px dotted #d3d3d3;
+}
+
+.Food{
+    text-align:center;
+    background-color:#fcf9b6;
+    margin:5px 3% 5px 3% ;
+    font-weight:bold;
+}
+.Cname{
+    margin-left:3%;
+}
+.CNum{
+    margin-left:3%;
+}
+.CTime {
+    margin-left: 3%;
+}
+.Cadds{
+    margin-left:3%;
+}
+
+
+.Obtn{
+    text-align:center;
+    height:40px;
+    float:left;
+    display:block;
+    font-size:25px;
+    padding-top:2px;
+    color:#ffffff;
+}
+.OAccept{
+    width:61%;
+    background-color:#00c10a;
+}
+.OCancel{
+    width:39%;
+    background-color:#21addb;
+}

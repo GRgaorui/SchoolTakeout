@@ -1,0 +1,282 @@
+﻿@{
+    Layout = "~/Views/Shared/_LayoutUserPort.cshtml";
+}
+<script>
+    //点击修改用户名按键
+    function ChangeUserName(Button) {
+        if ($(Button).attr("isclick") == "0") {
+            $(Button).css("color", "#FFCA28");
+            $(Button).css("background-color", "#FFF8E1");
+            $(Button).attr("isclick", "1");
+            $(ChangeUserNameBox).animate({ height: 'show' });
+        }
+        else {
+            $(Button).css("color", "#FFF8E1");
+            $(Button).css("background-color", "#FFCA28");
+            $(Button).attr("isclick", "0");
+            $(ChangeUserNameBox).animate({ height: 'hide' });
+        }
+    }
+    //确定更改用户名
+    function SureName(Button) {
+        $("#NameSuccess").text("请稍后...");
+        var NewName = $("#InputName").find("input").val();
+        if (NewName.length == 0) {
+            alert("用户名为空");
+        }
+        else {
+        $.ajax({
+                type: "post",
+                url: "/LittleStore/GetNewName",
+                data: { "UserAccount": @ViewData["UserAccount"],"NewName": NewName},
+                dataType: 'TEXT',
+                async: false,
+                success: function (result) {
+                    if (result == "1") {
+                        $("#NameSuccess").text("更改成功!");
+                        window.location.reload();
+                    }
+                    else {
+                        $("#NameSuccess").text("更改失败");
+                    }
+                }
+            });
+        }
+    }
+    //取消更改用户名
+    function CancelName(Button) {
+        $("#ChangeUserName").css("color", "#FFF8E1");
+        $("#ChangeUserName").css("background-color", "#FFCA28");
+        $("#ChangeUserName").attr("isclick", "0");
+        $(ChangeUserNameBox).animate({ height: 'hide' });
+    }
+
+    //点击修改联系电话按键
+    function ChangeUserPhone(Button) {
+        if ($(Button).attr("isclick") == "0") {
+            $(Button).css("border-bottom-width", "0px");
+            $(Button).css("border-left-width", "0px");
+            $(Button).css("border-top-width", "2px");
+            $(Button).css("border-right-width", "2px");
+            $("#ChangeUserPhone").animate({ height: 'show' });
+            $(Button).attr("isclick", "1");
+        }
+        else {
+            $(Button).css("border-bottom-width", "2px");
+            $(Button).css("border-left-width", "2px");
+            $(Button).css("border-top-width", "0px");
+            $(Button).css("border-right-width", "0px");
+            $("#ChangeUserPhone").animate({ height: 'hide' });
+            $(Button).attr("isclick", "0");
+        }
+    }
+    //确定修改电话
+    function SurePhone(Button) {
+        var NewPhone = $("#InputPhone").find("input").val();
+        if (NewPhone.length == 0) {
+            alert("号码为空");
+        }
+        else {
+        $.ajax({
+                type: "post",
+                url: "/LittleStore/GetNewPhone",
+                data: { "UserAccount": @ViewData["UserAccount"],"NewPhone": NewPhone},
+                dataType: 'TEXT',
+                async: false,
+                success: function (result) {
+                    if (result == "1") {
+                        $("#PhoneSuccess").text("更改成功!");
+                        window.location.reload();
+                    }
+                    else {
+                        $("#PhoneSuccess").text("更改失败");
+                    }
+                }
+            });
+        }
+    }
+    //取消修改电话
+    function CancelPhone(Button) {
+        $("#ChangeUserPhoneIcon").css("border-bottom-width", "2px");
+        $("#ChangeUserPhoneIcon").css("border-left-width", "2px");
+        $("#ChangeUserPhoneIcon").css("border-top-width", "0px");
+        $("#ChangeUserPhoneIcon").css("border-right-width", "0px");
+        $("#ChangeUserPhone").animate({ height: 'hide' });
+        $("#ChangeUserPhoneIcon").attr("isclick", "0");
+    }
+
+    //点击修改联系地址按键
+    function ChangeUserAddress(Button) {
+        if ($(Button).attr("isclick") == "0") {
+            $(Button).css("border-bottom-width", "0px");
+            $(Button).css("border-left-width", "0px");
+            $(Button).css("border-top-width", "2px");
+            $(Button).css("border-right-width", "2px");
+            $("#ChangeUserAddress").animate({ height: 'show' });
+            $(Button).attr("isclick", "1");
+        }
+        else {
+            $(Button).css("border-bottom-width", "2px");
+            $(Button).css("border-left-width", "2px");
+            $(Button).css("border-top-width", "0px");
+            $(Button).css("border-right-width", "0px");
+            $("#ChangeUserAddress").animate({ height: 'hide' });
+            $(Button).attr("isclick", "0");
+        }
+    }
+    //确定修改地址
+    function SureAddress(Button) {
+        var NewBuild = $("#InputBuildAddress").find("input").val();
+        var NewRoom = $("#InputRoomAddress").find("input").val();
+        if (NewBuild.length == 0 || NewRoom.length == 0) {
+            alert("地址为空");
+        }
+        else {
+        $.ajax({
+                type: "post",
+                url: "/LittleStore/GetNewAddress",
+                data: { "UserAccount": @ViewData["UserAccount"],"NewAddress": NewBuild + "栋" + NewRoom},
+                dataType: 'TEXT',
+                async: false,
+                success: function (result) {
+                    if (result == "1") {
+                        $("#AddressSuccess").text("更改成功!");
+                        window.location.reload();
+                    }
+                    else {
+                        $("#AddressSuccess").text("更改失败");
+                    }
+                }
+            });
+        }
+    }
+    //取消修改地址
+    function CancelAddress(Button) {
+        $("#ChangeUserAddressIcon").css("border-bottom-width", "2px");
+        $("#ChangeUserAddressIcon").css("border-left-width", "2px");
+        $("#ChangeUserAddressIcon").css("border-top-width", "0px");
+        $("#ChangeUserAddressIcon").css("border-right-width", "0px");
+        $("#ChangeUserAddress").animate({ height: 'hide' });
+        $("#ChangeUserAddressIcon").attr("isclick", "0");
+    }
+
+    window.onload = function () {
+        var Name = "@ViewData["UserName"]";
+        var Phone = "@ViewData["UserPhone"]"
+        var Address = "@ViewData["UserAddress"]";
+        $("#UserNameText").text(Name);
+        $("#NowUserPhoneNum").text(Phone);
+        $("#NowUserAddressText").text(Address);
+
+        var UserPhone = document.getElementById("UserPhone");
+        var UserAddress = document.getElementById("UserAddress");
+        var NowUserPhone = document.getElementById("NowUserPhone");
+        var NowUserAddress = document.getElementById("NowUserAddress");
+
+        UserPhone.IsClick = false;
+        UserAddress.IsClick = false;
+
+        //展开操作
+        UserPhone.onclick = function () {
+            if (UserPhone.IsClick === false) {
+                UserPhone.children[2].classList.remove("glyphicon-chevron-right");
+                UserPhone.children[2].classList.add("glyphicon-chevron-down");
+                $(NowUserPhone).css("display", "block");
+                UserPhone.IsClick = true;
+            }
+            else {
+                UserPhone.children[2].classList.remove("glyphicon-chevron-down");
+                UserPhone.children[2].classList.add("glyphicon-chevron-right");
+                $(NowUserPhone).css("display", "none");
+                UserPhone.IsClick = false;
+            }
+        }
+        UserAddress.onclick = function () {
+            if (UserAddress.IsClick === false) {
+                UserAddress.children[2].classList.remove("glyphicon-chevron-right");
+                UserAddress.children[2].classList.add("glyphicon-chevron-down");
+                $(NowUserAddress).css("display","block");
+                UserAddress.IsClick = true;
+            }
+            else {
+                UserAddress.children[2].classList.remove("glyphicon-chevron-down");
+                UserAddress.children[2].classList.add("glyphicon-chevron-right");
+                $(NowUserAddress).css("display", "none");
+                UserAddress.IsClick = false;
+            }
+        }
+    }
+</script>
+
+<nav class="navbar navbar-inverse navbar-fixed-bottom ">
+    <div class="container">
+        <ul class="nav navbar-nav" id="navul">
+            <li class="touchend">
+                <div id="navShopIcon" class="navIcon glyphicon glyphicon-home" aria-hidden="true">
+                </div>
+                <a href="/LittleStore/Shop?UserAccount=@ViewData["UserAccount"]&UserName=@ViewData["UserName"]&UserPhone=@ViewData["UserPhone"]&UserAddress=@ViewData["UserAddress"]">商店</a>
+            </li>
+            <li class="touchend">
+                <div id="navOrderIcon" class="navIcon glyphicon glyphicon-shopping-cart" aria-hidden="true">
+                </div>
+                <a href="/LittleStore/Order?UserAccount=@ViewData["UserAccount"]&UserName=@ViewData["UserName"]&UserPhone=@ViewData["UserPhone"]&UserAddress=@ViewData["UserAddress"]">订单</a>
+            </li>
+            <li class="touchstart">
+                <div id="navMineIcon" class="navIcon glyphicon glyphicon-user" aria-hidden="true">
+                </div>
+                <a href="/LittleStore/Mine?UserAccount=@ViewData["UserAccount"]&UserName=@ViewData["UserName"]&UserPhone=@ViewData["UserPhone"]&UserAddress=@ViewData["UserAddress"]">我的</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div id="Mine">
+    <div id="UserName">
+        <div id="ChangeUserName" class="glyphicon glyphicon-edit" aria-hidden="true" isclick="0" onclick="ChangeUserName(this)"></div>
+        <div id="ChangeUserNameBox">
+            <div id="InputName">
+                <div>请输入新的用户名</div>
+                <input type="text" />
+            </div>
+            <div id="NameSuccess">点击确认提交</div>
+            <div id="Ok" onclick="SureName(this)">确定</div><div id="No" onclick="CancelName(this)">取消</div>
+        </div>
+        <div id="UserNameIcon" class="TitleIcon glyphicon glyphicon-user" aria-hidden="true">
+        </div>
+        <div id="UserNameText" class="TitleText"></div>
+    </div>
+    <div id="UserImfo">
+        <div id="UserPhone" IsClick class="UserXXX">
+            <div id="UserPhoneIcon" class="UserIcon glyphicon glyphicon-phone" aria-hidden="true"></div>
+            <div id="UserPhoneText" class="UserText">联系电话</div>
+            <div id="OpenUserPhoneIcon" class="OpenUserIcon glyphicon glyphicon-chevron-right" aria-hidden="true"></div>   
+        </div>
+        <div id="NowUserPhone" class="NowUserXXX">
+            <div id="NowUserPhoneFont" class="NowUserFont">号码</div>
+            <div id="NowUserPhoneNum" class="NowUserText"></div>
+            <div id="ChangeUserPhoneIcon" class="ChangeUserIcon glyphicon glyphicon-pencil" aria-hidden="true" isclick="0" onclick="ChangeUserPhone(this)"></div>
+            <div class="ChangeUserBox" id="ChangeUserPhone">
+                <div id="InputPhone"><input type="number" pattern="[0-9]*"/></div>
+                <div id="PhoneSuccess">确认提交</div>
+                <div id="PhoneSure" onclick="SurePhone(this)">确定</div><div id="PhoneCancel" onclick="CancelPhone(this)">取消</div>
+            </div>
+        </div>
+        <div id="UserAddress" IsClick class="UserXXX">
+            <div id="UserAddressIcon" class="UserIcon glyphicon glyphicon-map-marker" aria-hidden="true"></div>
+            <div id="UserAddressText" class="UserText">收货地址</div>
+            <div id="OpenUserAddressIcon" class="OpenUserIcon glyphicon glyphicon-chevron-right" aria-hidden="true"></div>  
+        </div>
+        <div id="NowUserAddress" class="NowUserXXX">
+            <div id="NowUserAddressFont" class="NowUserFont">地址</div>
+            <div id="NowUserAddressText" class="NowUserText"></div>
+            <div id="ChangeUserAddressIcon" class="ChangeUserIcon glyphicon glyphicon-pencil" aria-hidden="true" isclick="0" onclick="ChangeUserAddress(this)"></div>
+            <div class="ChangeUserBox" id="ChangeUserAddress">
+                <div id="InputBuildAddress"><input type="number" pattern="[0-9]*" /></div>
+                <div id="ChangeBuild">栋</div>
+                <div id="InputRoomAddress"><input type="number" pattern="[0-9]*" /></div>
+                <div id="AddressSuccess">确认提交</div>
+                <div id="AddressSure" onclick="SureAddress(this)">确定</div><div id="AddressCancel" onclick="CancelAddress(this)">取消</div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - xxxx外卖</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <link href="~/Content/PageStyle.css" rel="stylesheet" />
+    <script type="text/javascript" src="~/www/cordova.js"></script>
+    <script type="text/javascript" src="~/www/scripts/platformOverrides.js"></script>
+</head>
+<body>
+    <div class="bottomnav">
+        <hr class="Bottomhrstyle" />
+        <ul class="Bottomfuncarea">
+            <li><a style="color:#666666" href="/Delivery/RobOrder?id=@ViewData["Account"]">抢单</a></li>
+            <li><a style="color:#666666" href="/Delivery/Distribution?id=@ViewData["Account"]">配送</a></li>
+            <li><a style="color:#666666" href="/Delivery/Success?id=@ViewData["Account"]">成功</a></li>
+            <li><a style="color:#666666" href="/Delivery/Mine?id=@ViewData["Account"]">我</a></li>
+        </ul>
+    </div>
+
+    <script>
+         var localStorage = window.localStorage;
+         var DeliveryAccount = localStorage.getItem("Account");
+    </script>
+
+    <div class="container">
+        @RenderBody()
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <script type="text/javascript">
+         (function () {
+             "use strict";
+
+             document.addEventListener('deviceready1', onDeviceReady.bind(this), false);
+             function onDeviceReady() {
+                 // 处理 Cordova 暂停并恢复事件
+                 document.addEventListener('pause', onPause.bind(this), false);
+                 document.addEventListener('resume', onResume.bind(this), false);
+
+                 // TODO: Cordova 已加载。在此处执行任何需要 Cordova 的初始化。
+                 var parentElement = document.getElementById('deviceready');
+                 var listeningElement = parentElement.querySelector('.listening');
+                 var receivedElement = parentElement.querySelector('.received');
+                 listeningElement.setAttribute('style', 'display:none;');
+                 receivedElement.setAttribute('style', 'display:block;');
+             };
+
+             function onPause() {
+                 // TODO: 此应用程序已挂起。在此处保存应用程序状态。
+             };
+
+             function onResume() {
+                 // TODO: 此应用程序已重新激活。在此处还原应用程序状态。
+             };
+
+         })();
+    </script>
+    <div></div>
+  
+
+</body>
+</html>

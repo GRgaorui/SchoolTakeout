@@ -1,0 +1,92 @@
+﻿#foodEdittop{
+    padding:10px 20px 5px 20px;
+    background-color:#13a4db;
+    color:#ffffff;
+    font-size:20px;
+}
+.FoodEditM>div{
+    height:70px;
+    background-color:#f6f6f6;
+    margin-top:5px;
+    margin-bottom:5px;
+    padding:0px 10px 0px 10px;
+    text-align:center;
+    font-size:20px;
+}
+.WFoodPic{
+    height:70px;
+    width:70px;
+    border:1px solid #dcdcd5
+}
+.FoodToggleBtn>div>div{
+    border-radius:100px;
+    border:1px solid #dcdcd5;
+    background-color:#ffffff;
+    width:28px;
+    height:28px;
+}
+.FoodToggleBtn>div{
+    border-radius:100px;
+    width:55px;
+}
+
+.FoodToggleBtn{
+    min-width:50px;
+    width:10%;
+}
+.Introduce{
+    font-size:16px;
+}
+.BtnOn{
+    background-color:#59ce37;
+}
+.BtnOn>div{
+    margin-right:-1px;margin-left:auto;
+}
+.BtnOff{
+    background-color:#dcdcdc;
+}
+#SearchBar{
+    
+}
+#searchtext{
+    width:67%;
+     height:30px;
+}
+#searchbtn{
+    background-color:#5cc0e6;
+    height:28px;
+    width:10%;
+    border-radius:3px;
+    transition-duration:0.5s;
+    transition-property: background-color;
+}
+#searchbtn:active{
+    background-color:#b0e4f8;
+}
+#Addbtn{
+    float:right;
+    background:#5cc0e6;
+    height:100%;
+    border-radius:3px;
+    transition-duration:0.5s;
+    transition-property: background-color;
+}
+#Addbtn:active 
+{
+        background-color: #b0e4f8;
+}
+#foodEditDetail{
+    display:none;
+    margin-top:40%;
+    background-color:#dcdcd5;
+    border-radius:3px;
+    border:2px solid #808080;
+    padding:10px 0px 10px 10px;
+
+}
+.EidtBtn{
+    color:#000000;
+    width:auto;
+ 
+}

@@ -1,0 +1,86 @@
+﻿
+@{
+    ViewBag.Title = "ShopOrder";
+}
+@using SchoolTakeout.Tool;
+@using System.Data.SqlClient;
+@using System.Runtime.Serialization.Json;
+@using System.Runtime.Serialization;
+@using System.Text;
+<h2>ShopOrder</h2>
+<table class="table table-striped table-hover table-bordered">
+    <tr id="ShopName">
+    </tr>
+</table>
+<table class="table table-striped table-hover table-bordered" id="OrderInfo">
+    
+</table>
+@{
+    SqlDB A = new SqlDB();
+    SqlDataReader read = A.GetShop();
+    List<List<string>> show = new List<List<string>>();
+    while (read.Read())
+    {
+        List<string> arry = new List<string>();
+        for (int i = 0; i < read.FieldCount; i++)
+        {
+            arry.Add(read[i].ToString());
+        }
+        show.Add(arry);
+    }
+    A.CloseConnection();
+    DataContractJsonSerializer json = new DataContractJsonSerializer(show.GetType());
+    string szJson = "";
+    using (MemoryStream stream = new MemoryStream()) //序列化
+    {
+        json.WriteObject(stream, show);
+        szJson = Encoding.UTF8.GetString(stream.ToArray());
+    }
+
+    //获取商家订单
+    SqlDataReader read1 = A.SelectShopOrder(show[0][0]);
+    List<List<string>> show1 = new List<List<string>>();
+    while (read1.Read())
+    {
+        List<string> arry = new List<string>();
+        for (int i = 0; i < read1.FieldCount; i++)
+        {
+            arry.Add(read1[i].ToString());
+        }
+        show1.Add(arry);
+    }
+    A.CloseConnection();
+    DataContractJsonSerializer json1 = new DataContractJsonSerializer(show1.GetType());
+    string szJson1 = "";
+    using (MemoryStream stream = new MemoryStream()) //序列化
+    {
+        json1.WriteObject(stream, show1);
+        szJson1 = Encoding.UTF8.GetString(stream.ToArray());
+    }
+}
+<script>
+    window.onload = function ()
+    {
+        var text = "@szJson";
+        var arrEntities = { 'lt': '<', 'gt': '>', 'nbsp': ' ', 'amp': '&', 'quot': '"' };
+        var t=text.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) { return arrEntities[t]; });
+        var obj = eval("(" + t + ")");
+        var i = 0;
+        while (i < obj.length) {
+            var text = "<td> <input type='button' value='" + obj[i][1] + "' /></td>";
+            $("#ShopName").append(text);
+            i++;
+        }
+
+        var Order = "@szJson1";
+        var a = Order.replace(/&(lt|gt|nbsp|amp|quot);/ig, function (all, t) { return arrEntities[t]; });
+        var info = eval("(" + a + ")");
+        var j = 0;
+        while (j < info.length) {
+            var text1 = "<tr><td>" + info[j][0] + "</td><td>" + info[j][1] + "</td><td>" + info[j][2] + "</td><td>" + info[j][3] + "</td><td>" + info[j][4] + "</td><td>" + info[j][5] + "</td><td>" + info[j][6] + "</td><td>" + info[j][7] + "</td></tr>";
+            $("#OrderInfo").append(text1);
+            j++;
+        }
+    }
+</script>
+

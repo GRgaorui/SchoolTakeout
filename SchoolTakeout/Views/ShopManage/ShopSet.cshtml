@@ -1,0 +1,59 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_ShopManageLayout.cshtml";
+}
+@using SchoolTakeout.Tool;
+@using System.Data.SqlClient;
+@{
+    int i=0;
+    SqlDB A = new SqlDB();
+    SqlDataReader read = A.GetShopManageShop(@ViewData["Account"].ToString());
+    while(read.Read())
+    {
+        i=int.Parse(read[0].ToString());
+    }
+}
+<div class="navbar-fixed-top " id="ShopState">
+    店铺状态：正在营业！
+</div>
+<div class="row Shop">
+
+    <div id="shopToggle" onclick="Switch()">开启店铺</div>
+    <div class="col-xs-12" >今日订单数量</div>
+    <table class="Otable">
+        <tr>
+            <td style="width:20%;"> </td>
+            <td id="OCount" style="width:60%;"> </td>
+            <td style="width:20%;">单</td>
+        </tr>
+    </table>
+
+    <a href="/ShopManage/OrderHistory?Account=@ViewData["Account"].ToString()"><div id="History" class="col-xs-12">历史订单查询</div></a>
+    <a href="/ShopManage/FoodEdit?Account=@ViewData["Account"].ToString()"><div class="col-xs-12">菜品修改</div></a>
+    <a href="#"><div class="col-xs-12">查看财务</div></a>
+</div>
+<script type="text/javascript">
+    window.onload = Init(@i);
+    var shopstate = @i;
+    var account="666666";
+function Init(x)
+    {
+    setInterval("updata()", 5000);
+        if(x)
+        {
+            shopToggle.innerHTML = "关闭店铺";
+            ShopState.innerHTML = "店铺状态：正在营业！";
+            shopToggle.style = "";
+            ShopState.style = "background-color:#3ecc33;";
+            
+        }
+        else{
+            shopToggle.innerHTML = "开启店铺";
+            ShopState.innerHTML = "店铺状态：暂停营业！";
+            shopToggle.style = "";
+            ShopState.style = "background-color:#ff6a00;";
+        }
+        OCount.innerHTML = 20;
+}
+
+</script>
